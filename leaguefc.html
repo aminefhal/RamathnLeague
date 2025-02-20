@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champions League Draw</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .group {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .group h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .group p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #fixtures {
+            margin-top: 30px;
+        }
+
+        #fixtures h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .fixture-group {
+            margin-bottom: 30px;
+        }
+
+        .fixture-group h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .fixture-group p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .admin-input {
+            margin: 10px 0;
+        }
+
+        .admin-input input {
+            padding: 8px;
+            font-size: 1rem;
+            width: 60px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .points-table {
+            margin-top: 30px;
+        }
+
+        .points-table h2 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .points-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .points-table th, .points-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .points-table th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .points-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .round {
+            margin-bottom: 30px;
+        }
+
+        .round h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .login-form {
+            margin-top: 20px;
+        }
+
+        .login-form input {
+            padding: 8px;
+            font-size: 1rem;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="login" class="container">
+        <h1>Login</h1>
+        <div class="login-form">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div id="user-interface" class="container hidden">
+        <h1>Champions League Draw (User View)</h1>
+        <div id="user-groups"></div>
+        <div id="user-fixtures"></div>
+        <div id="user-points" class="points-table"></div>
+        <div id="user-top-scorers" class="points-table"></div> <!-- Top Scorers Table -->
+    </div>
+
+    <div id="admin-interface" class="container hidden">
+        <h1>Champions League Draw (Admin View)</h1>
+        <button onclick="drawTeams()">Generate Draw</button>
+        <button onclick="saveData()">Save Draw</button> <!-- Save Button -->
+        <div id="admin-groups"></div>
+        <div id="admin-fixtures"></div>
+        <div id="admin-points" class="points-table"></div>
+        <div id="admin-top-scorers" class="points-table"></div> <!-- Top Scorers Table -->
+        <div id="admin-player-goals" class="points-table"></div> <!-- Player Goals Input -->
+    </div>
+
+    <script>
+        const teams = [
+            "FC BLAUGRANA", "TEAM2", "TEAM3", "TEAM4",
+            "TEAM5", "TEAM6", "TEAM7", "TEAM8"
+        ];
+
+        const players = [
+            "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
+            "Brahim", "Ali", "Anas", "Louati", "Malek",
+        ];
+
+        let groups = [];
+        let fixtures = [];
+        let pointsTable = {};
+        let playerGoals = {}; // Track goals for each player
+
+        // Initialize player goals
+        function initializePlayerGoals() {
+            players.forEach(player => {
+                playerGoals[player] = 0;
+            });
+        }
+
+        // Load saved data from local storage
+        function loadSavedData() {
+            const savedGroups = localStorage.getItem("groups");
+            const savedFixtures = localStorage.getItem("fixtures");
+            const savedPointsTable = localStorage.getItem("pointsTable");
+            const savedPlayerGoals = localStorage.getItem("playerGoals");
+
+            if (savedGroups && savedFixtures && savedPointsTable && savedPlayerGoals) {
+                groups = JSON.parse(savedGroups);
+                fixtures = JSON.parse(savedFixtures);
+                pointsTable = JSON.parse(savedPointsTable);
+                playerGoals = JSON.parse(savedPlayerGoals);
+
+                // Render the saved data
+                renderAdminInterface();
+                renderUserInterface();
+            }
+        }
+
+        // Save data to local storage
+        function saveData() {
+            localStorage.setItem("groups", JSON.stringify(groups));
+            localStorage.setItem("fixtures", JSON.stringify(fixtures));
+            localStorage.setItem("pointsTable", JSON.stringify(pointsTable));
+            localStorage.setItem("playerGoals", JSON.stringify(playerGoals));
+            alert("Draw saved successfully!");
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function generateFixtures(group, groupName) {
+            let groupFixtures = [];
+            for (let i = 0; i < group.length; i++) {
+                for (let j = i + 1; j < group.length; j++) {
+                    groupFixtures.push({
+                        match: `${group[i]} vs ${group[j]}`,
+                        team1: group[i],
+                        team2: group[j],
+                        score1: 0,
+                        score2: 0,
+                        played: false,
+                        group: groupName // Add group name to fixture
+                    });
+                }
+            }
+            return groupFixtures;
+        }
+
+        function initializePointsTable(groups) {
+            pointsTable = {};
+            groups.forEach((group, groupIndex) => {
+                group.forEach(team => {
+                    pointsTable[team] = { 
+                        group: String.fromCharCode(65 + groupIndex), // Group A or B
+                        points: 0, 
+                        played: 0, 
+                        wins: 0, 
+                        draws: 0, 
+                        losses: 0, 
+                        goalsFor: 0, 
+                        goalsAgainst: 0 
+                    };
+                });
+            });
+        }
+
+        function updatePointsTable(team1, team2, score1, score2) {
+            pointsTable[team1].played += 1;
+            pointsTable[team2].played += 1;
+            pointsTable[team1].goalsFor += score1;
+            pointsTable[team1].goalsAgainst += score2;
+            pointsTable[team2].goalsFor += score2;
+            pointsTable[team2].goalsAgainst += score1;
+
+            if (score1 > score2) {
+                pointsTable[team1].points += 3; // Team 1 wins
+                pointsTable[team1].wins += 1;
+                pointsTable[team2].losses += 1;
+            } else if (score1 < score2) {
+                pointsTable[team2].points += 3; // Team 2 wins
+                pointsTable[team2].wins += 1;
+                pointsTable[team1].losses += 1;
+            } else {
+                pointsTable[team1].points += 1; // Draw
+                pointsTable[team2].points += 1;
+                pointsTable[team1].draws += 1;
+                pointsTable[team2].draws += 1;
+            }
+
+            saveData(); // Save updated data
+        }
+
+        function renderPointsTable(containerId) {
+            const pointsContainer = document.getElementById(containerId);
+            pointsContainer.innerHTML = "<h2>Points Table</h2>";
+
+            // Render Group A Table
+            let groupA = Object.keys(pointsTable).filter(team => pointsTable[team].group === "A");
+            let groupB = Object.keys(pointsTable).filter(team => pointsTable[team].group === "B");
+
+            renderGroupTable("Group A", groupA, pointsContainer);
+            renderGroupTable("Group B", groupB, pointsContainer);
+        }
+
+        function renderGroupTable(groupName, teams, container) {
+            let tableHtml = `<h3>${groupName}</h3>
+                             <table>
+                                 <tr>
+                                     <th>Team</th>
+                                     <th>Played</th>
+                                     <th>Wins</th>
+                                     <th>Draws</th>
+                                     <th>Losses</th>
+                                     <th>GF</th>
+                                     <th>GA</th>
+                                     <th>Points</th>
+                                 </tr>`;
+
+            teams.forEach(team => {
+                const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
+                tableHtml += `<tr>
+                                  <td>${team}</td>
+                                  <td>${played}</td>
+                                  <td>${wins}</td>
+                                  <td>${draws}</td>
+                                  <td>${losses}</td>
+                                  <td>${goalsFor}</td>
+                                  <td>${goalsAgainst}</td>
+                                  <td>${points}</td>
+                               </tr>`;
+            });
+
+            tableHtml += `</table>`;
+            container.innerHTML += tableHtml;
+        }
+
+        function renderTopScorers(containerId) {
+            const topScorersContainer = document.getElementById(containerId);
+            topScorersContainer.innerHTML = "<h2>Top Scorers</h2>";
+
+            // Sort players by goals (descending order)
+            const sortedPlayers = Object.keys(playerGoals).sort((a, b) => playerGoals[b] - playerGoals[a]);
+
+            let tableHtml = `<table>
+                                 <tr>
+                                     <th>Player</th>
+                                     <th>Goals</th>
+                                 </tr>`;
+
+            sortedPlayers.forEach(player => {
+                tableHtml += `<tr>
+                                  <td>${player}</td>
+                                  <td>${playerGoals[player]}</td>
+                               </tr>`;
+            });
+
+            tableHtml += `</table>`;
+            topScorersContainer.innerHTML += tableHtml;
+        }
+
+        function renderPlayerGoalsInput() {
+            const playerGoalsContainer = document.getElementById("admin-player-goals");
+            playerGoalsContainer.innerHTML = "<h2>Player Goals</h2>";
+
+            let inputHtml = `<table>
+                                 <tr>
+                                     <th>Player</th>
+                                     <th>Goals</th>
+                                 </tr>`;
+
+            players.forEach(player => {
+                inputHtml += `<tr>
+                                  <td>${player}</td>
+                                  <td>
+                                      <input type="number" id="goals-${player}" value="${playerGoals[player]}" min="0">
+                                      <button onclick="updatePlayerGoals('${player}')">Update</button>
+                                  </td>
+                               </tr>`;
+            });
+
+            inputHtml += `</table>`;
+            playerGoalsContainer.innerHTML += inputHtml;
+        }
+
+        function updatePlayerGoals(player) {
+            const goals = parseInt(document.getElementById(`goals-${player}`).value);
+
+            if (isNaN(goals)) {
+                alert("Please enter a valid number of goals.");
+                return;
+            }
+
+            playerGoals[player] = goals;
+            saveData(); // Save updated data
+            renderTopScorers("admin-top-scorers"); // Update top scorers table
+            renderUserInterface(); // Update user view
+        }
+
+        function drawTeams() {
+            shuffle(teams);
+            const groupsContainer = document.getElementById("admin-groups");
+            const fixturesContainer = document.getElementById("admin-fixtures");
+            groupsContainer.innerHTML = "";
+            fixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            groups = [[], []];
+            for (let i = 0; i < teams.length; i++) {
+                groups[i % 2].push(teams[i]);
+            }
+
+            initializePointsTable(groups);
+            initializePlayerGoals(); // Initialize player goals
+            renderPointsTable("admin-points");
+            renderTopScorers("admin-top-scorers");
+            renderPlayerGoalsInput(); // Render player goals input
+
+            fixtures = [];
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                groupsContainer.appendChild(groupDiv);
+
+                let groupFixtures = generateFixtures(group, String.fromCharCode(65 + index));
+                fixtures.push(...groupFixtures);
+
+                // Organize fixtures into rounds
+                let rounds = organizeFixturesIntoRounds(groupFixtures);
+
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
+                rounds.forEach((round, roundIndex) => {
+                    fixtureHtml += `<div class="round">
+                                       <h3>Round ${roundIndex + 1}</h3>`;
+                    round.forEach((fixture, idx) => {
+                        fixtureHtml += `<p>${fixture.match}</p>
+                                         <div class="admin-input">
+                                             <input type="number" id="score1-${index}-${roundIndex}-${idx}" placeholder="Score 1">
+                                             <input type="number" id="score2-${index}-${roundIndex}-${idx}" placeholder="Score 2">
+                                             <button onclick="updateScore(${index}, ${roundIndex}, ${idx})">Update Score</button>
+                                         </div>`;
+                    });
+                    fixtureHtml += `</div>`;
+                });
+                fixtureDiv.innerHTML = fixtureHtml;
+                fixturesContainer.appendChild(fixtureDiv);
+            });
+
+            saveData(); // Save the draw
+        }
+
+        function organizeFixturesIntoRounds(fixtures) {
+            let rounds = [];
+            let numRounds = fixtures.length / 2; // Assuming 2 matches per round
+            for (let i = 0; i < numRounds; i++) {
+                rounds.push(fixtures.slice(i * 2, (i + 1) * 2));
+            }
+            return rounds;
+        }
+
+        function updateScore(groupIndex, roundIndex, fixtureIndex) {
+            const score1 = parseInt(document.getElementById(`score1-${groupIndex}-${roundIndex}-${fixtureIndex}`).value);
+            const score2 = parseInt(document.getElementById(`score2-${groupIndex}-${roundIndex}-${fixtureIndex}`).value);
+
+            if (isNaN(score1) || isNaN(score2)) {
+                alert("Please enter valid scores.");
+                return;
+            }
+
+            const groupFixtures = fixtures.filter(f => f.group === String.fromCharCode(65 + groupIndex));
+            const rounds = organizeFixturesIntoRounds(groupFixtures);
+            const fixture = rounds[roundIndex][fixtureIndex];
+
+            if (fixture.played) {
+                alert("This fixture has already been updated.");
+                return;
+            }
+
+            fixture.score1 = score1;
+            fixture.score2 = score2;
+            fixture.played = true;
+
+            updatePointsTable(fixture.team1, fixture.team2, score1, score2);
+            renderPointsTable("admin-points");
+            renderTopScorers("admin-top-scorers"); // Update top scorers table
+            renderUserInterface(); // Update user view
+        }
+
+        function renderUserInterface() {
+            const userGroupsContainer = document.getElementById("user-groups");
+            const userFixturesContainer = document.getElementById("user-fixtures");
+            userGroupsContainer.innerHTML = "";
+            userFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                userGroupsContainer.appendChild(groupDiv);
+
+                let groupFixtures = fixtures.filter(f => f.group === String.fromCharCode(65 + index));
+                let rounds = organizeFixturesIntoRounds(groupFixtures);
+
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
+                rounds.forEach((round, roundIndex) => {
+                    fixtureHtml += `<div class="round">
+                                       <h3>Round ${roundIndex + 1}</h3>`;
+                    round.forEach((fixture, idx) => {
+                        fixtureHtml += `<p>${fixture.match} - ${fixture.score1} : ${fixture.score2}</p>`;
+                    });
+                    fixtureHtml += `</div>`;
+                });
+                fixtureDiv.innerHTML = fixtureHtml;
+                userFixturesContainer.appendChild(fixtureDiv);
+            });
+
+            renderPointsTable("user-points");
+            renderTopScorers("user-top-scorers"); // Render top scorers table for user view
+        }
+
+        function renderAdminInterface() {
+            const adminGroupsContainer = document.getElementById("admin-groups");
+            const adminFixturesContainer = document.getElementById("admin-fixtures");
+            adminGroupsContainer.innerHTML = "";
+            adminFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                adminGroupsContainer.appendChild(groupDiv);
+
+                let groupFixtures = fixtures.filter(f => f.group === String.fromCharCode(65 + index));
+                let rounds = organizeFixturesIntoRounds(groupFixtures);
+
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
+                rounds.forEach((round, roundIndex) => {
+                    fixtureHtml += `<div class="round">
+                                       <h3>Round ${roundIndex + 1}</h3>`;
+                    round.forEach((fixture, idx) => {
+                        fixtureHtml += `<p>${fixture.match}</p>
+                                         <div class="admin-input">
+                                             <input type="number" id="score1-${index}-${roundIndex}-${idx}" placeholder="Score 1">
+                                             <input type="number" id="score2-${index}-${roundIndex}-${idx}" placeholder="Score 2">
+                                             <button onclick="updateScore(${index}, ${roundIndex}, ${idx})">Update Score</button>
+                                         </div>`;
+                    });
+                    fixtureHtml += `</div>`;
+                });
+                fixtureDiv.innerHTML = fixtureHtml;
+                adminFixturesContainer.appendChild(fixtureDiv);
+            });
+
+            renderPointsTable("admin-points");
+            renderTopScorers("admin-top-scorers"); // Render top scorers table for admin view
+            renderPlayerGoalsInput(); // Render player goals input
+        }
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            console.log("Login attempt:", username, password); // Debugging
+
+            if (username === "admin" && password === "admin123") {
+                console.log("Admin login successful"); // Debugging
+                document.getElementById("login").classList.add("hidden");
+                document.getElementById("admin-interface").classList.remove("hidden");
+                loadSavedData(); // Load saved data
+                renderAdminInterface();
+            } else if (username === "user" && password === "user123") {
+                console.log("User login successful"); // Debugging
+                document.getElementById("login").classList.add("hidden");
+                document.getElementById("user-interface").classList.remove("hidden");
+                loadSavedData(); // Load saved data
+                renderUserInterface();
+            } else {
+                console.log("Invalid credentials"); // Debugging
+                alert("Invalid username or password.");
+            }
+        }
+    </script>
+</body>
+</html>
