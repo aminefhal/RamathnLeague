@@ -247,7 +247,7 @@
             alert("Draw saved successfully!");
         }
 
-        // Share the draw via URL
+        // Share the draw via URL and copy to clipboard
         function shareDraw() {
             const data = {
                 groups: groups,
@@ -258,7 +258,13 @@
 
             const encodedData = encodeURIComponent(JSON.stringify(data));
             const url = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
-            alert(`Share this URL to let others view the draw:\n\n${url}`);
+
+            // Copy the URL to the clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                alert(`URL copied to clipboard! Share this URL to let others view the draw:\n\n${url}`);
+            }).catch(() => {
+                alert(`Failed to copy URL to clipboard. Please manually copy this URL:\n\n${url}`);
+            });
         }
 
         // Load data from URL query parameters
