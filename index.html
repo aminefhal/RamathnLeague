@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Champions League Draw</title>
-    <style>
+<style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
@@ -188,6 +188,7 @@
         <h1>Champions League Draw (Admin View)</h1>
         <button onclick="drawTeams()">Generate Draw</button>
         <button onclick="saveData()">Save Draw</button> <!-- Save Button -->
+        <button onclick="shareDraw()">Share Draw</button> <!-- Share Button -->
         <div id="admin-groups"></div>
         <div id="admin-fixtures"></div>
         <div id="admin-points" class="points-table"></div>
@@ -197,13 +198,13 @@
 
     <script>
         const teams = [
-            "FC BLAUGRANA", "TEAM2", "TEAM3", "TEAM4",
-            "TEAM5", "TEAM6", "TEAM7", "TEAM8"
+            "Real Madrid", "Barcelona", "Bayern Munich", "Man City",
+            "PSG", "Liverpool", "Chelsea", "Juventus"
         ];
 
         const players = [
             "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
-            "Brahim", "Ali", "Anas", "Louati", "Malek",
+            "Brahim", "Ali", "Anas", "Louati", "Malek"
         ];
 
         let groups = [];
@@ -244,6 +245,39 @@
             localStorage.setItem("pointsTable", JSON.stringify(pointsTable));
             localStorage.setItem("playerGoals", JSON.stringify(playerGoals));
             alert("Draw saved successfully!");
+        }
+
+        // Share the draw via URL
+        function shareDraw() {
+            const data = {
+                groups: groups,
+                fixtures: fixtures,
+                pointsTable: pointsTable,
+                playerGoals: playerGoals
+            };
+
+            const encodedData = encodeURIComponent(JSON.stringify(data));
+            const url = `${window.location.origin}${window.location.pathname}?data=${encodedData}`;
+            alert(`Share this URL to let others view the draw:\n\n${url}`);
+        }
+
+        // Load data from URL query parameters
+        function loadDataFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const dataParam = urlParams.get("data");
+
+            if (dataParam) {
+                const data = JSON.parse(decodeURIComponent(dataParam));
+                groups = data.groups;
+                fixtures = data.fixtures;
+                pointsTable = data.pointsTable;
+                playerGoals = data.playerGoals;
+
+                // Render the loaded data
+                renderUserInterface();
+                document.getElementById("login").classList.add("hidden");
+                document.getElementById("user-interface").classList.remove("hidden");
+            }
         }
 
         function shuffle(array) {
@@ -609,6 +643,9 @@
                 alert("Invalid username or password.");
             }
         }
+
+        // Load data from URL when the page loads
+        loadDataFromURL();
     </script>
 </body>
 </html>
