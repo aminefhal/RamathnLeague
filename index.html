@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramathan League Draw</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .group {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .group h3 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .group p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="login" class="container">
+        <h1>Login</h1>
+        <div class="login-form">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div id="user-interface" class="container hidden">
+        <h1>Ramathan League Draw</h1>
+        <div id="user-groups"></div>
+        <div id="user-fixtures"></div>
+        <div id="user-points" class="points-table"></div>
+        <div id="user-top-scorers" class="points-table"></div>
+        <div id="user-players" class="points-table"></div>
+    </div>
+
+    <div id="admin-interface" class="container hidden">
+        <h1>Ramathan League Draw (Admin View)</h1>
+        <button onclick="saveData()">Save Draw</button>
+        <button onclick="shareDraw()">Share Draw</button>
+        <div id="admin-groups"></div>
+        <div id="admin-fixtures"></div>
+        <div id="admin-points" class="points-table"></div>
+        <div id="admin-top-scorers" class="points-table"></div>
+        <div id="admin-player-goals" class="points-table"></div>
+        <div id="admin-players" class="points-table"></div>
+    </div>
+
+    <script>
+        const backendUrl = "https://your-backend.onrender.com"; // Replace with your Render backend URL
+
+        // Hardcoded usernames and passwords
+        const users = {
+            "user": { password: "user123", role: "user" },
+            "admin": { password: "admin123", role: "admin" }
+        };
+
+        let groups = [];
+        let fixtures = [];
+        let pointsTable = {};
+        let playerGoals = {};
+        let players = [];
+
+        // Login function
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (users[username] && users[username].password === password) {
+                const role = users[username].role;
+                document.getElementById("login").classList.add("hidden");
+
+                if (role === "admin") {
+                    document.getElementById("admin-interface").classList.remove("hidden");
+                    fetchData();
+                } else if (role === "user") {
+                    document.getElementById("user-interface").classList.remove("hidden");
+                    fetchData();
+                }
+            } else {
+                alert("Invalid username or password");
+            }
+        }
+
+        // Fetch data from the backend
+        async function fetchData() {
+            try {
+                const response = await fetch(`${backendUrl}/data`);
+                const result = await response.json();
+                groups = result.groups;
+                fixtures = result.fixtures;
+                pointsTable = result.pointsTable;
+                playerGoals = result.playerGoals;
+                players = result.players;
+
+                // Render the data
+                renderAdminInterface();
+                renderUserInterface();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Render user interface
+        function renderUserInterface() {
+            const userGroupsContainer = document.getElementById("user-groups");
+            const userFixturesContainer = document.getElementById("user-fixtures");
+            userGroupsContainer.innerHTML = "";
+            userFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                userGroupsContainer.appendChild(groupDiv);
+
+                let groupFixtures = fixtures[index];
+                let rounds = organizeFixturesIntoRounds(groupFixtures);
+
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
+                rounds.forEach((round, roundIndex) => {
+                    fixtureHtml += `<div class="round">
+                                       <h3>Round ${roundIndex + 1}</h3>`;
+                    round.forEach((fixture, idx) => {
+                        fixtureHtml += `<p>${fixture.match} - ${fixture.score1} : ${fixture.score2}</p>`;
+                    });
+                    fixtureHtml += `</div>`;
+                });
+                fixtureDiv.innerHTML = fixtureHtml;
+                userFixturesContainer.appendChild(fixtureDiv);
+            });
+
+            renderPointsTable("user-points");
+            renderTopScorers("user-top-scorers");
+            renderPlayers("user-players");
+        }
+
+        // Render admin interface
+        function renderAdminInterface() {
+            const adminGroupsContainer = document.getElementById("admin-groups");
+            const adminFixturesContainer = document.getElementById("admin-fixtures");
+            adminGroupsContainer.innerHTML = "";
+            adminFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                adminGroupsContainer.appendChild(groupDiv);
+
+                let groupFixtures = fixtures[index];
+                let rounds = organizeFixturesIntoRounds(groupFixtures);
+
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
+                rounds.forEach((round, roundIndex) => {
+                    fixtureHtml += `<div class="round">
+                                       <h3>Round ${roundIndex + 1}</h3>`;
+                    round.forEach((fixture, idx) => {
+                        fixtureHtml += `<p>${fixture.match}</p>
+                                         <div class="admin-input">
+                                             <input type="number" id="score1-${index}-${roundIndex}-${idx}" placeholder="Score 1">
+                                             <input type="number" id="score2-${index}-${roundIndex}-${idx}" placeholder="Score 2">
+                                             <button onclick="updateScore(${index}, ${roundIndex}, ${idx})">Update Score</button>
+                                         </div>`;
+                    });
+                    fixtureHtml += `</div>`;
+                });
+                fixtureDiv.innerHTML = fixtureHtml;
+                adminFixturesContainer.appendChild(fixtureDiv);
+            });
+
+            renderPointsTable("admin-points");
+            renderTopScorers("admin-top-scorers");
+            renderPlayerGoalsInput();
+            renderPlayers("admin-players");
+        }
+
+        // Helper function to organize fixtures into rounds
+        function organizeFixturesIntoRounds(fixtures) {
+            let rounds = [];
+            let numRounds = fixtures.length / 2; // Assuming 2 matches per round
+            for (let i = 0; i < numRounds; i++) {
+                rounds.push(fixtures.slice(i * 2, (i + 1) * 2));
+            }
+            return rounds;
+        }
+    </script>
+</body>
+</html>
