@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-<style>
+    <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
@@ -177,75 +177,74 @@
     </div>
 
     <div id="user-interface" class="container hidden">
-        <h1>Ramathan League Draw </h1>
+        <h1>Ramathan League Draw</h1>
         <div id="user-groups"></div>
         <div id="user-fixtures"></div>
         <div id="user-points" class="points-table"></div>
-        <div id="user-top-scorers" class="points-table"></div> <!-- Top Scorers Table -->
+        <div id="user-top-scorers" class="points-table"></div>
     </div>
 
     <div id="admin-interface" class="container hidden">
-        <h1>Ramathan League Draw (Admin View)</h1>
-        <button onclick="drawTeams()">Generate Draw</button>
-        <button onclick="saveData()">Save Draw</button> <!-- Save Button -->
-        <button onclick="shareDraw()">Share Draw</button> <!-- Share Button -->
+        <h1>Ramathan League Draw</h1>
+        <button onclick="saveData()">Save Draw</button>
+        <button onclick="shareDraw()">Share Draw</button>
         <div id="admin-groups"></div>
         <div id="admin-fixtures"></div>
         <div id="admin-points" class="points-table"></div>
-        <div id="admin-top-scorers" class="points-table"></div> <!-- Top Scorers Table -->
-        <div id="admin-player-goals" class="points-table"></div> <!-- Player Goals Input -->
+        <div id="admin-top-scorers" class="points-table"></div>
+        <div id="admin-player-goals" class="points-table"></div>
     </div>
 
     <script>
-        const teams = [
-            "Rades Highrollers", "Fc Blaugrana", "Bafana Bafana", "Nova",
-            "Belkaf sport", "Kawefel Getti", "", ""
-        ];
+        // Manually assign teams to groups
+       let groups = [ // Use `let` instead of `const`
+    ["Rades Highrollers", "Fc Blaugrana", "Bafana Bafana", "Nova"], // Group 1
+    ["Belkaf sport", "Kawefel Getti", "Fackroun fc", "Dridi fc"]    // Group 2
+];
 
         const players = [
             "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
             "Bahar", "Ali", "Anas", "Louati", "Malek",
-            "Hwita","Aymen","Dahleb","Rayen","Hama",
-            "Brahim","Jasser","thabet","Bahreya",
-            "Noury","Abdou","Mehdi","Derouiche",
-            "Dali","Souhaib","Farhat","Mrabet",
-            "Besrour","Yemen","Jesser","Hamed",
-            "Ahmed","Aziz","Avila","Chmich","Llaykaa",
-            "Dhia","Youssef","derouiche","Adam","Mazgou",
-            "Essghaier","Haj Said","Dridi"
+            "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
+            "Brahim", "Jasser", "Thabet", "Bahreya",
+            "Noury", "Abdou", "Mehdi", "Derouiche",
+            "Dali", "Souhaib", "Farhat", "Mrabet",
+            "Besrour", "Yemen", "Jesser", "Hamed",
+            "Ahmed", "Aziz", "Avila", "Chmich", "Llaykaa",
+            "Dhia", "Youssef", "Derouiche", "Adam", "Mazgou",
+            "Essghaier", "Haj Said", "Dridi"
         ];
 
-        let groups = [];
-        let fixtures = [];
-        let pointsTable = {};
-        let playerGoals = {}; // Track goals for each player
+        let fixtures = []; // Use `let` instead of `const`
+let pointsTable = {}; // Use `let` instead of `const`
+let playerGoals = {}; // Use `let` instead of `const`
 
-        // Initialize player goals
-        function initializePlayerGoals() {
-            players.forEach(player => {
-                playerGoals[player] = 0;
-            });
-        }
+// Initialize player goals
+function initializePlayerGoals() {
+    players.forEach(player => {
+        playerGoals[player] = 0;
+    });
+}
 
-        // Load saved data from local storage
-        function loadSavedData() {
-            const savedGroups = localStorage.getItem("groups");
-            const savedFixtures = localStorage.getItem("fixtures");
-            const savedPointsTable = localStorage.getItem("pointsTable");
-            const savedPlayerGoals = localStorage.getItem("playerGoals");
+// Load saved data from local storage
+function loadSavedData() {
+    console.log("Loading saved data..."); // Debugging
+    const savedGroups = localStorage.getItem("groups");
+    const savedFixtures = localStorage.getItem("fixtures");
+    const savedPointsTable = localStorage.getItem("pointsTable");
+    const savedPlayerGoals = localStorage.getItem("playerGoals");
 
-            if (savedGroups && savedFixtures && savedPointsTable && savedPlayerGoals) {
-                groups = JSON.parse(savedGroups);
-                fixtures = JSON.parse(savedFixtures);
-                pointsTable = JSON.parse(savedPointsTable);
-                playerGoals = JSON.parse(savedPlayerGoals);
+    if (savedGroups && savedFixtures && savedPointsTable && savedPlayerGoals) {
+        groups = JSON.parse(savedGroups); // Reassign `groups`
+        fixtures = JSON.parse(savedFixtures); // Reassign `fixtures`
+        pointsTable = JSON.parse(savedPointsTable); // Reassign `pointsTable`
+        playerGoals = JSON.parse(savedPlayerGoals); // Reassign `playerGoals`
 
-                // Render the saved data
-                renderAdminInterface();
-                renderUserInterface();
-            }
-        }
-
+        // Render the saved data
+        renderAdminInterface();
+        renderUserInterface();
+    }
+}
         // Save data to local storage
         function saveData() {
             localStorage.setItem("groups", JSON.stringify(groups));
@@ -294,13 +293,7 @@
             }
         }
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
+        // Generate fixtures for the groups
         function generateFixtures(group, groupName) {
             let groupFixtures = [];
             for (let i = 0; i < group.length; i++) {
@@ -312,13 +305,14 @@
                         score1: 0,
                         score2: 0,
                         played: false,
-                        group: groupName // Add group name to fixture
+                        group: groupName
                     });
                 }
             }
             return groupFixtures;
         }
 
+        // Initialize points table
         function initializePointsTable(groups) {
             pointsTable = {};
             groups.forEach((group, groupIndex) => {
@@ -337,6 +331,7 @@
             });
         }
 
+        // Update points table
         function updatePointsTable(team1, team2, score1, score2) {
             pointsTable[team1].played += 1;
             pointsTable[team2].played += 1;
@@ -363,6 +358,7 @@
             saveData(); // Save updated data
         }
 
+        // Render points table
         function renderPointsTable(containerId) {
             const pointsContainer = document.getElementById(containerId);
             pointsContainer.innerHTML = "<h2>Points Table</h2>";
@@ -375,6 +371,7 @@
             renderGroupTable("Group B", groupB, pointsContainer);
         }
 
+        // Render group table
         function renderGroupTable(groupName, teams, container) {
             let tableHtml = `<h3>${groupName}</h3>
                              <table>
@@ -407,6 +404,7 @@
             container.innerHTML += tableHtml;
         }
 
+        // Render top scorers
         function renderTopScorers(containerId) {
             const topScorersContainer = document.getElementById(containerId);
             topScorersContainer.innerHTML = "<h2>Top Scorers</h2>";
@@ -431,6 +429,7 @@
             topScorersContainer.innerHTML += tableHtml;
         }
 
+        // Render player goals input
         function renderPlayerGoalsInput() {
             const playerGoalsContainer = document.getElementById("admin-player-goals");
             playerGoalsContainer.innerHTML = "<h2>Player Goals</h2>";
@@ -455,6 +454,7 @@
             playerGoalsContainer.innerHTML += inputHtml;
         }
 
+        // Update player goals
         function updatePlayerGoals(player) {
             const goals = parseInt(document.getElementById(`goals-${player}`).value);
 
@@ -469,60 +469,7 @@
             renderUserInterface(); // Update user view
         }
 
-        function drawTeams() {
-            shuffle(teams);
-            const groupsContainer = document.getElementById("admin-groups");
-            const fixturesContainer = document.getElementById("admin-fixtures");
-            groupsContainer.innerHTML = "";
-            fixturesContainer.innerHTML = "<h2>Fixtures</h2>";
-
-            groups = [[], []];
-            for (let i = 0; i < teams.length; i++) {
-                groups[i % 2].push(teams[i]);
-            }
-
-            initializePointsTable(groups);
-            initializePlayerGoals(); // Initialize player goals
-            renderPointsTable("admin-points");
-            renderTopScorers("admin-top-scorers");
-            renderPlayerGoalsInput(); // Render player goals input
-
-            fixtures = [];
-            groups.forEach((group, index) => {
-                let groupDiv = document.createElement("div");
-                groupDiv.className = "group";
-                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
-                groupsContainer.appendChild(groupDiv);
-
-                let groupFixtures = generateFixtures(group, String.fromCharCode(65 + index));
-                fixtures.push(...groupFixtures);
-
-                // Organize fixtures into rounds
-                let rounds = organizeFixturesIntoRounds(groupFixtures);
-
-                let fixtureDiv = document.createElement("div");
-                fixtureDiv.className = "fixture-group";
-                let fixtureHtml = `<h3>Group ${String.fromCharCode(65 + index)} Fixtures</h3>`;
-                rounds.forEach((round, roundIndex) => {
-                    fixtureHtml += `<div class="round">
-                                       <h3>Round ${roundIndex + 1}</h3>`;
-                    round.forEach((fixture, idx) => {
-                        fixtureHtml += `<p>${fixture.match}</p>
-                                         <div class="admin-input">
-                                             <input type="number" id="score1-${index}-${roundIndex}-${idx}" placeholder="Score 1">
-                                             <input type="number" id="score2-${index}-${roundIndex}-${idx}" placeholder="Score 2">
-                                             <button onclick="updateScore(${index}, ${roundIndex}, ${idx})">Update Score</button>
-                                         </div>`;
-                    });
-                    fixtureHtml += `</div>`;
-                });
-                fixtureDiv.innerHTML = fixtureHtml;
-                fixturesContainer.appendChild(fixtureDiv);
-            });
-
-            saveData(); // Save the draw
-        }
-
+        // Organize fixtures into rounds
         function organizeFixturesIntoRounds(fixtures) {
             let rounds = [];
             let numRounds = fixtures.length / 2; // Assuming 2 matches per round
@@ -532,6 +479,7 @@
             return rounds;
         }
 
+        // Update score
         function updateScore(groupIndex, roundIndex, fixtureIndex) {
             const score1 = parseInt(document.getElementById(`score1-${groupIndex}-${roundIndex}-${fixtureIndex}`).value);
             const score2 = parseInt(document.getElementById(`score2-${groupIndex}-${roundIndex}-${fixtureIndex}`).value);
@@ -560,6 +508,7 @@
             renderUserInterface(); // Update user view
         }
 
+        // Render user interface
         function renderUserInterface() {
             const userGroupsContainer = document.getElementById("user-groups");
             const userFixturesContainer = document.getElementById("user-fixtures");
@@ -594,6 +543,7 @@
             renderTopScorers("user-top-scorers"); // Render top scorers table for user view
         }
 
+        // Render admin interface
         function renderAdminInterface() {
             const adminGroupsContainer = document.getElementById("admin-groups");
             const adminFixturesContainer = document.getElementById("admin-fixtures");
@@ -634,6 +584,7 @@
             renderPlayerGoalsInput(); // Render player goals input
         }
 
+        // Login function
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
@@ -658,8 +609,21 @@
             }
         }
 
+        // Initialize data on page load
+        function initializeData() {
+            initializePointsTable(groups);
+            initializePlayerGoals();
+            fixtures = [];
+            groups.forEach((group, index) => {
+                fixtures.push(...generateFixtures(group, String.fromCharCode(65 + index)));
+            });
+        }
+
         // Load data from URL when the page loads
         loadDataFromURL();
+
+        // Initialize data
+        initializeData();
     </script>
 </body>
 </html>
