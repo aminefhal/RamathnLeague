@@ -1,28 +1,35 @@
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const path = require('path');
+const port = process.env.PORT || 3000; // Use environment variable or default to 3000
 
-// Sample data for groups, teams, and players
-const teams = ["FC BLAUGRANA", "TEAM2", "TEAM3", "TEAM4", "TEAM5", "TEAM6", "TEAM7", "TEAM8"];
-const players = ["Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", "Brahim", "Ali", "Anas", "Louati", "Malek"];
+app.use(cors());
+app.use(express.json());
 
-let groups = [
-    ["FC BLAUGRANA", "TEAM2", "TEAM3", "TEAM4"],
-    ["TEAM5", "TEAM6", "TEAM7", "TEAM8"]
-];
+// Initial data
+let data = {
+    groups: [
+        ["Rades Highrollers", "Fc Blaugrana", "Bafana Bafana", "Nova"], // Group 1
+        ["Belkaf sport", "Kawefel Getti", "Fackroun fc", "Dridi fc"]    // Group 2
+    ],
+    fixtures: [],
+    pointsTable: {},
+    playerGoals: {},
+    players: [
+        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
+        "Bahar", "Ali", "Anas", "Louati", "Malek",
+        "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
+        "Brahim", "Jasser", "Thabet", "Bahreya",
+        "Noury", "Abdou", "Mehdi", "Derouiche",
+        "Dali", "Souhaib", "Farhat", "Mrabet",
+        "Besrour", "Yemen", "Jesser", "Hamed",
+        "Ahmed", "Aziz", "Avila", "Chmich", "Llaykaa",
+        "Dhia", "Youssef", "Derouiche", "Adam", "Mazgou",
+        "Essghaier", "Haj Said", "Dridi"
+    ]
+};
 
-let fixtures = [];
-let pointsTable = {};
-let playerGoals = {};
-
-// Initialize player goals
-function initializePlayerGoals() {
-    players.forEach(player => {
-        playerGoals[player] = 0;
-    });
-}
-
-// Generate Fixtures
+// Generate initial fixtures
 function generateFixtures(group, groupName) {
     let groupFixtures = [];
     for (let i = 0; i < group.length; i++) {
@@ -41,55 +48,84 @@ function generateFixtures(group, groupName) {
     return groupFixtures;
 }
 
-// Initialize points table
-function initializePointsTable() {
-    pointsTable = {};
-    groups.forEach((group, groupIndex) => {
-        group.forEach(team => {
-            pointsTable[team] = { 
-                group: String.fromCharCode(65 + groupIndex),
-                points: 0,
-                played: 0,
-                wins: 0,
-                draws: 0,
-                losses: 0,
-                goalsFor: 0,
-                goalsAgainst: 0
-            };
-        });
-    });
+// Initialize data
+data.fixtures = data.groups.map((group, index) => generateFixtures(group, String.fromCharCode(65 + index)));
+
+// Get all data
+app.get("/data", (req, res) => {
+    res.json(data);
+});
+
+// Update scores
+app.post("/update-score", (req, res) => {
+    const { groupIndex, roundIndex, fixtureIndex, score1, score2 } = req.body;
+
+    // Validate input
+    if (
+        typeof groupIndex !== "number" ||
+        typeof roundIndex !== "number" ||
+        typeof fixtureIndex !== "number" ||
+        typeof score1 !== "number" ||
+        typeof score2 !== "number"
+    ) {
+        return res.status(400).json({ success: false, message: "Invalid input" });
+    }
+
+    // Update the fixture
+    const fixture = data.fixtures[groupIndex][roundIndex][fixtureIndex];
+    fixture.score1 = score1;
+    fixture.score2 = score2;
+    fixture.played = true;
+
+    // Update points table
+    updatePointsTable(fixture.team1, fixture.team2, score1, score2);
+
+    res.json({ success: true });
+});
+
+// Update player goals
+app.post("/update-player-goals", (req, res) => {
+    const { player, goals } = req.body;
+
+    // Validate input
+    if (typeof player !== "string" || typeof goals !== "number") {
+        return res.status(400).json({ success: false, message: "Invalid input" });
+    }
+
+    // Update player goals
+    data.playerGoals[player] = goals;
+
+    res.json({ success: true });
+});
+
+// Helper function to update points table
+function updatePointsTable(team1, team2, score1, score2) {
+    if (!data.pointsTable[team1]) data.pointsTable[team1] = { points: 0, played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 };
+    if (!data.pointsTable[team2]) data.pointsTable[team2] = { points: 0, played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 };
+
+    data.pointsTable[team1].played += 1;
+    data.pointsTable[team2].played += 1;
+    data.pointsTable[team1].goalsFor += score1;
+    data.pointsTable[team1].goalsAgainst += score2;
+    data.pointsTable[team2].goalsFor += score2;
+    data.pointsTable[team2].goalsAgainst += score1;
+
+    if (score1 > score2) {
+        data.pointsTable[team1].points += 3;
+        data.pointsTable[team1].wins += 1;
+        data.pointsTable[team2].losses += 1;
+    } else if (score1 < score2) {
+        data.pointsTable[team2].points += 3;
+        data.pointsTable[team2].wins += 1;
+        data.pointsTable[team1].losses += 1;
+    } else {
+        data.pointsTable[team1].points += 1;
+        data.pointsTable[team2].points += 1;
+        data.pointsTable[team1].draws += 1;
+        data.pointsTable[team2].draws += 1;
+    }
 }
 
-// Generate the fixtures
-app.get('/generateFixtures', (req, res) => {
-    fixtures = [];
-    groups.forEach((group, index) => {
-        fixtures.push(...generateFixtures(group, String.fromCharCode(65 + index)));
-    });
-    res.json({ fixtures });
-});
-
-// Get the points table
-app.get('/getPointsTable', (req, res) => {
-    res.json({ pointsTable });
-});
-
-// Serve frontend HTML, CSS, and JavaScript
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Handle POST request to save data (like goals, fixtures, etc.)
-app.post('/saveData', (req, res) => {
-    res.send("Data saved successfully!");
-});
-
-// Basic route to serve the page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Start the server
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
-    initializePlayerGoals();
-    initializePointsTable();
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
