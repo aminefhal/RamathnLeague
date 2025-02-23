@@ -259,63 +259,85 @@
                         <tr>
                             <th>Player</th>
                             <th>Goals</th>
+                            <th>Update Goals</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
-            for (const player in playerGoals) {
+            // Render each player with a field to update their goals
+            Object.keys(playerGoals).forEach(player => {
                 tableHTML += `
                     <tr>
                         <td>${player}</td>
                         <td>${playerGoals[player]}</td>
+                        <td>
+                            <input type="number" id="goal-input-${player}" placeholder="Goals" />
+                            <button onclick="updatePlayerGoals('${player}')">Update</button>
+                        </td>
                     </tr>
                 `;
-            }
+            });
 
             tableHTML += "</tbody></table>";
             table.innerHTML = tableHTML;
         }
 
-        // Add goals to player manually
-        function addPlayerGoals() {
-            const playerName = document.getElementById('player-name').value;
-            const playerGoalsInput = document.getElementById('player-goals').value;
+        // Update player goals manually from input
+        function updatePlayerGoals(player) {
+            const playerGoalsInput = document.getElementById(`goal-input-${player}`).value;
 
-            if (playerName && playerGoalsInput && !isNaN(playerGoalsInput)) {
-                // Add player goals to the playerGoals object
-                playerGoals[playerName] = (playerGoals[playerName] || 0) + parseInt(playerGoalsInput);
+            if (playerGoalsInput && !isNaN(playerGoalsInput)) {
+                // Update player goals in the local data object
+                playerGoals[player] = parseInt(playerGoalsInput);
 
-                // Re-render the top scorers table
+                // Re-render the top scorers table and player goals table
                 renderTopScorers("admin-top-scorers");
                 renderPlayerGoals("admin-player-goals");
 
-                // Clear input fields
-                document.getElementById('player-name').value = '';
-                document.getElementById('player-goals').value = '';
+                // Clear the input field
+                document.getElementById(`goal-input-${player}`).value = '';
             } else {
-                alert('Please enter valid player name and goals.');
+                alert('Please enter a valid number of goals.');
             }
         }
 
-        // Login function
+        // Handle the login
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            if (username === "admin" && password === "admin123") {
-                console.log("Admin login successful");
+            // Simple hardcoded login (for testing purposes)
+            if (username === "admin" && password === "admin") {
                 document.getElementById("login").classList.add("hidden");
                 document.getElementById("admin-interface").classList.remove("hidden");
-                fetchData(); // Fetch data for admin
-            } else if (username === "user" && password === "user123") {
-                console.log("User login successful");
+                fetchData();
+            } else if (username === "user" && password === "user") {
                 document.getElementById("login").classList.add("hidden");
                 document.getElementById("user-interface").classList.remove("hidden");
-                fetchData(); // Fetch data for user
+                fetchData();
             } else {
-                console.log("Invalid credentials");
-                alert("Invalid username or password.");
+                alert("Invalid login credentials.");
+            }
+        }
+
+        // Add player goals manually
+        function addPlayerGoals() {
+            const playerName = document.getElementById("player-name").value;
+            const playerGoalsInput = document.getElementById("player-goals").value;
+
+            if (playerName && playerGoalsInput && !isNaN(playerGoalsInput)) {
+                playerGoals[playerName] = parseInt(playerGoalsInput);
+
+                // Re-render tables after updating
+                renderTopScorers("admin-top-scorers");
+                renderPlayerGoals("admin-player-goals");
+
+                // Clear inputs
+                document.getElementById("player-name").value = '';
+                document.getElementById("player-goals").value = '';
+            } else {
+                alert('Please enter valid player name and goal count.');
             }
         }
     </script>
