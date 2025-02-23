@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
    <style>
+        /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
             margin: 0;
             padding: 0;
@@ -22,6 +23,7 @@
             font-size: 2.5rem;
             color: #2c3e50;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .container {
@@ -29,17 +31,18 @@
             width: 100%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .group {
             border: 1px solid #ddd;
             padding: 20px;
             margin: 20px 0;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+            border-radius: 10px;
+            background: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .group h3 {
@@ -58,15 +61,21 @@
             padding: 12px 24px;
             font-size: 1rem;
             color: #fff;
-            background-color: #3498db;
+            background: linear-gradient(135deg, #3498db, #2980b9);
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin: 5px;
         }
 
         button:hover {
-            background-color: #2980b9;
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         #fixtures {
@@ -131,7 +140,7 @@
         }
 
         .points-table th {
-            background-color: #3498db;
+            background: linear-gradient(135deg, #3498db, #2980b9);
             color: #fff;
         }
 
@@ -163,6 +172,36 @@
 
         .hidden {
             display: none;
+        }
+
+        /* Enhanced Button Styles */
+        .reset-button {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .admin-input input {
+                width: 100%;
+                margin: 5px 0;
+            }
         }
     </style>
 </head>
@@ -212,9 +251,12 @@
             "Noury", "Abdou", "Mehdi", "Derouiche",
             "Dali", "Souhaib", "Farhat", "Mrabet",
             "Besrour", "Yemen", "Jesser", "Hamed",
-            "Ahmed", "Aziz", "Avila", "Chmich", "Llaykaa",
-            "Dhia", "Youssef", "Derouiche", "Adam", "Mazgou",
-            "Essghaier", "Haj Said", "Dridi"
+            "Ahmed", "Aziz", "Avila", "Chmich",
+            "Llaykaa","Dhia", "Youssef", "Derouiche",
+            "Adam", "Mazgou","Essghaier", "Haj Said",
+            "Dridi","Dridi","Moemen","Debchi",
+            "Charfa","Cherif","Brahim Yz","Islem",
+            "Atef","Midou","Chicharito",
         ];
 
         let fixtures = [];
