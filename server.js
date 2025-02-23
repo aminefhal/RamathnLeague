@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; // Use environment variable or default to 3000
 
 app.use(cors());
 app.use(express.json());
@@ -60,6 +60,17 @@ app.get("/data", (req, res) => {
 app.post("/update-score", (req, res) => {
     const { groupIndex, roundIndex, fixtureIndex, score1, score2 } = req.body;
 
+    // Validate input
+    if (
+        typeof groupIndex !== "number" ||
+        typeof roundIndex !== "number" ||
+        typeof fixtureIndex !== "number" ||
+        typeof score1 !== "number" ||
+        typeof score2 !== "number"
+    ) {
+        return res.status(400).json({ success: false, message: "Invalid input" });
+    }
+
     // Update the fixture
     const fixture = data.fixtures[groupIndex][roundIndex][fixtureIndex];
     fixture.score1 = score1;
@@ -75,6 +86,11 @@ app.post("/update-score", (req, res) => {
 // Update player goals
 app.post("/update-player-goals", (req, res) => {
     const { player, goals } = req.body;
+
+    // Validate input
+    if (typeof player !== "string" || typeof goals !== "number") {
+        return res.status(400).json({ success: false, message: "Invalid input" });
+    }
 
     // Update player goals
     data.playerGoals[player] = goals;
