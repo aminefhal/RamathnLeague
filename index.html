@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-   <style>
+    <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
@@ -131,6 +131,40 @@
             }
         }
 
+        // Render user interface
+        function renderUserInterface() {
+            console.log("Rendering user interface"); // Debugging
+            const userGroupsContainer = document.getElementById("user-groups");
+            const userFixturesContainer = document.getElementById("user-fixtures");
+            userGroupsContainer.innerHTML = "";
+            userFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+
+            // Render groups
+            groups.forEach((group, index) => {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "group";
+                groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
+                userGroupsContainer.appendChild(groupDiv);
+            });
+
+            // Render fixtures
+            fixtures.forEach((groupFixtures, groupIndex) => {
+                let fixtureDiv = document.createElement("div");
+                fixtureDiv.className = "fixture-group";
+                fixtureDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + groupIndex)} Fixtures</h3>`;
+                groupFixtures.matches.forEach((fixture) => {
+                    fixtureDiv.innerHTML += `<p>${fixture.team1} vs ${fixture.team2}</p>`;
+                });
+                userFixturesContainer.appendChild(fixtureDiv);
+            });
+
+            // Render points table for user (can be simplified if necessary)
+            renderPointsTable("user-points");
+
+            // Render top scorers for user (can be simplified if necessary)
+            renderTopScorers("user-top-scorers");
+        }
+
         // Render admin interface
         function renderAdminInterface() {
             console.log("Rendering admin interface"); // Debugging
@@ -152,8 +186,8 @@
                 let fixtureDiv = document.createElement("div");
                 fixtureDiv.className = "fixture-group";
                 fixtureDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + groupIndex)} Fixtures</h3>`;
-                groupFixtures.forEach((fixture, fixtureIndex) => {
-                    fixtureDiv.innerHTML += `<p>${fixture.match}</p>
+                groupFixtures.matches.forEach((fixture, fixtureIndex) => {
+                    fixtureDiv.innerHTML += `<p>${fixture.team1} vs ${fixture.team2}</p>
                                              <div class="admin-input">
                                                  <input type="number" id="score1-${groupIndex}-${fixtureIndex}" placeholder="Score 1">
                                                  <input type="number" id="score2-${groupIndex}-${fixtureIndex}" placeholder="Score 2">
@@ -192,6 +226,17 @@
                 console.log("Invalid credentials");
                 alert("Invalid username or password.");
             }
+        }
+
+        // Placeholder functions for rendering points table and top scorers
+        function renderPointsTable(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "<h3>Points Table</h3><p>Points data will go here.</p>";
+        }
+
+        function renderTopScorers(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "<h3>Top Scorers</h3><p>Top scorers data will go here.</p>";
         }
 
         // Call fetchData() when the page loads (for testing)
