@@ -91,6 +91,11 @@ function initializePlayerGoals() {
 // Initialize data on server start
 initializeData();
 
+// Root route
+app.get('/', (req, res) => {
+    res.send('Welcome to the Ramathan League Draw API!');
+});
+
 // API to get data
 app.get('/api/data', (req, res) => {
     res.json(data);
