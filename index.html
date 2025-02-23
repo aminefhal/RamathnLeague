@@ -72,6 +72,20 @@
         .hidden {
             display: none;
         }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .standings-table th, .standings-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .standings-table th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +104,21 @@
         <div id="user-fixtures"></div>
         <div id="user-points" class="points-table"></div>
         <div id="user-top-scorers" class="points-table"></div>
+        <!-- Player standings -->
+        <div id="user-player-standings">
+            <h2>Top Scorers</h2>
+            <table class="standings-table" id="user-player-standings-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Goals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div id="admin-interface" class="container hidden">
@@ -99,6 +128,21 @@
         <div id="admin-points" class="points-table"></div>
         <div id="admin-top-scorers" class="points-table"></div>
         <div id="admin-player-goals" class="points-table"></div>
+        <!-- Player standings -->
+        <div id="admin-player-standings">
+            <h2>Top Scorers</h2>
+            <table class="standings-table" id="admin-player-standings-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Goals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -163,6 +207,9 @@
 
             // Render top scorers
             renderTopScorers("user-top-scorers");
+
+            // Render player standings
+            renderPlayerStandings("user-player-standings-table");
         }
 
         // Render admin interface
@@ -205,6 +252,40 @@
 
             // Render player goals input
             renderPlayerGoalsInput();
+
+            // Render player standings
+            renderPlayerStandings("admin-player-standings-table");
+        }
+
+        // Render top scorers
+        function renderTopScorers(elementId) {
+            const topScorers = Object.entries(playerGoals)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5); // Top 5 players
+
+            const tableBody = document.getElementById(elementId).getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear previous data
+
+            topScorers.forEach(([player, goals]) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${player}</td><td>${goals}</td>`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Render player standings
+        function renderPlayerStandings(elementId) {
+            const topScorers = Object.entries(playerGoals)
+                .sort((a, b) => b[1] - a[1]);
+
+            const tableBody = document.getElementById(elementId).getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear previous data
+
+            topScorers.forEach(([player, goals]) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td>${player}</td><td>${goals}</td>`;
+                tableBody.appendChild(row);
+            });
         }
 
         // Login function
