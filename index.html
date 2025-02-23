@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-     <style>
+   <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f9;
@@ -188,6 +188,7 @@
         <h1>Ramathan League Draw</h1>
         <button onclick="saveData()">Save Draw</button>
         <button onclick="shareDraw()">Share Draw</button>
+        <button onclick="resetResults()">Reset Results</button> <!-- Add this button -->
         <div id="admin-groups"></div>
         <div id="admin-fixtures"></div>
         <div id="admin-points" class="points-table"></div>
@@ -551,6 +552,38 @@
             }).catch(() => {
                 alert(`Failed to copy URL to clipboard. Please manually copy this URL:\n\n${url}`);
             });
+        }
+
+        // Reset results
+        function resetResults() {
+            if (confirm("Are you sure you want to reset all results? This action cannot be undone.")) {
+                // Reset groups
+                groups = [
+                    ["Rades Highrollers", "Fc Blaugrana", "Belkaf sport", "Warriors Fc "], // Group 1
+                    ["Bafana Bafana", "Nova", "Kawefel Getti", "Fakroun fc"] // Group 2
+                ];
+
+                // Reset fixtures
+                fixtures = [];
+                groups.forEach((group, index) => {
+                    fixtures.push(...generateFixtures(group, String.fromCharCode(65 + index)));
+                });
+
+                // Reset points table
+                initializePointsTable(groups);
+
+                // Reset player goals
+                initializePlayerGoals();
+
+                // Save the reset data to the server
+                saveData();
+
+                // Re-render the interfaces
+                renderAdminInterface();
+                renderUserInterface();
+
+                alert("Results have been reset successfully!");
+            }
         }
 
         // Login function
