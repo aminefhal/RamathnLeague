@@ -86,6 +86,11 @@
         .standings-table th {
             background-color: #f2f2f2;
         }
+
+        .update-input {
+            width: 60px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -112,6 +117,7 @@
                     <tr>
                         <th>Player</th>
                         <th>Goals</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,6 +142,7 @@
                     <tr>
                         <th>Player</th>
                         <th>Goals</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -257,60 +264,93 @@
             renderPlayerStandings("admin-player-standings-table");
         }
 
+        // Render player standings with update input
+        function renderPlayerStandings(elementId) {
+            const tableBody = document.getElementById(elementId).getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = "";
+
+            for (let player in playerGoals) {
+                let row = tableBody.insertRow();
+                let nameCell = row.insertCell(0);
+                let goalsCell = row.insertCell(1);
+                let updateCell = row.insertCell(2);
+
+                nameCell.textContent = player;
+                goalsCell.textContent = playerGoals[player];
+
+                // Update button
+                let updateButton = document.createElement("button");
+                updateButton.textContent = "Update";
+                updateButton.onclick = () => openUpdatePlayerModal(player);
+                updateCell.appendChild(updateButton);
+            }
+        }
+
+        // Open update player modal (admin only)
+        function openUpdatePlayerModal(player) {
+            const playerGoalsInput = prompt(`Enter new goal count for ${player}`, playerGoals[player]);
+            if (playerGoalsInput != null) {
+                playerGoals[player] = parseInt(playerGoalsInput, 10);
+                renderPlayerStandings("admin-player-standings-table");
+            }
+        }
+
+        // Render points table
+        function renderPointsTable(elementId) {
+            const pointsTableContainer = document.getElementById(elementId);
+            pointsTableContainer.innerHTML = "<h2>Points Table</h2>";
+            let table = document.createElement("table");
+            table.classList.add("standings-table");
+            let tableHeader = `<tr><th>Team</th><th>Points</th></tr>`;
+            table.innerHTML = tableHeader;
+
+            for (const team in pointsTable) {
+                let row = table.insertRow();
+                let teamCell = row.insertCell(0);
+                let pointsCell = row.insertCell(1);
+                teamCell.textContent = team;
+                pointsCell.textContent = pointsTable[team];
+            }
+            pointsTableContainer.appendChild(table);
+        }
+
         // Render top scorers
         function renderTopScorers(elementId) {
-            const topScorers = Object.entries(playerGoals)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5); // Top 5 players
+            const topScorersContainer = document.getElementById(elementId);
+            topScorersContainer.innerHTML = "<h2>Top Scorers</h2>";
+            let table = document.createElement("table");
+            table.classList.add("standings-table");
+            let tableHeader = `<tr><th>Player</th><th>Goals</th></tr>`;
+            table.innerHTML = tableHeader;
 
-            const tableBody = document.getElementById(elementId).getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = ""; // Clear previous data
+            for (const player in playerGoals) {
+                let row = table.insertRow();
+                let playerCell = row.insertCell(0);
+                let goalsCell = row.insertCell(1);
+                playerCell.textContent = player;
+                goalsCell.textContent = playerGoals[player];
+            }
 
-            topScorers.forEach(([player, goals]) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `<td>${player}</td><td>${goals}</td>`;
-                tableBody.appendChild(row);
-            });
+            topScorersContainer.appendChild(table);
         }
 
-        // Render player standings
-        function renderPlayerStandings(elementId) {
-            const topScorers = Object.entries(playerGoals)
-                .sort((a, b) => b[1] - a[1]);
-
-            const tableBody = document.getElementById(elementId).getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = ""; // Clear previous data
-
-            topScorers.forEach(([player, goals]) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `<td>${player}</td><td>${goals}</td>`;
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Login function
+        // Handle login
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            if (username === "admin" && password === "admin123") {
-                console.log("Admin login successful");
+            if (username === "admin" && password === "admin") {
                 document.getElementById("login").classList.add("hidden");
                 document.getElementById("admin-interface").classList.remove("hidden");
                 fetchData(); // Fetch data for admin
-            } else if (username === "user" && password === "user123") {
-                console.log("User login successful");
+            } else if (username === "user" && password === "user") {
                 document.getElementById("login").classList.add("hidden");
                 document.getElementById("user-interface").classList.remove("hidden");
                 fetchData(); // Fetch data for user
             } else {
-                console.log("Invalid credentials");
-                alert("Invalid username or password.");
+                alert("Invalid login credentials");
             }
         }
-
-        // Call fetchData() when the page loads (for testing)
-        // fetchData();
     </script>
 </body>
 </html>
