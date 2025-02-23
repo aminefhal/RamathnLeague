@@ -71,16 +71,20 @@ function initializePointsTable() {
 // Initialize player goals
 function initializePlayerGoals() {
     const players = [
-        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine",
-        "Bahar", "Ali", "Anas", "Louati", "Malek",
-        "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
-        "Brahim", "Jasser", "Thabet", "Bahreya",
-        "Noury", "Abdou", "Mehdi", "Derouiche",
-        "Dali", "Souhaib", "Farhat", "Mrabet",
-        "Besrour", "Yemen", "Jesser", "Hamed",
-        "Ahmed", "Aziz", "Avila", "Chmich", "Llaykaa",
-        "Dhia", "Youssef", "Derouiche", "Adam", "Mazgou",
-        "Essghaier", "Haj Said", "Dridi"
+            "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
+            "Bahar", "Ali", "Anas", "Louati", "Malek",
+            "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
+            "Brahim", "Jasser", "Thabet", "Bahreya",
+            "Noury", "Abdou", "Mehdi", "Derouiche",
+            "Dali", "Souhaib", "Farhat", "Mrabet",
+            "Besrour", "Yemen", "Jesser", "Hamed",
+            "Ahmed", "Aziz", "Avila", "Chmich",
+            "Llaykaa","Dhia", "Youssef", "Derouiche",
+            "Adam", "Mazgou","Essghaier", "Haj Said",
+            "Dridi","Dridi","Moemen","Debchi",
+            "Charfa","Cherif","Brahim Yz","Islem",
+            "Atef","Midou","Chicharito",
+       
     ];
     data.playerGoals = {};
     players.forEach(player => {
