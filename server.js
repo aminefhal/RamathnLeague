@@ -1,9 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = process.env.PORT || 3000; // Use environment variable for port
+const port = process.env.PORT || 3000;
 
-app.use(cors());
+// Allow requests from your frontend origin
+app.use(cors({
+    origin: 'https://aminefhal.github.io' // Replace with your frontend URL
+}));
+
 app.use(express.json());
 
 let data = {
