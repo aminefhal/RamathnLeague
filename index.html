@@ -131,20 +131,20 @@
             }
         }
 
-        // Render user interface
-        function renderUserInterface() {
-            console.log("Rendering user interface"); // Debugging
-            const userGroupsContainer = document.getElementById("user-groups");
-            const userFixturesContainer = document.getElementById("user-fixtures");
-            userGroupsContainer.innerHTML = "";
-            userFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
+        // Render admin interface
+        function renderAdminInterface() {
+            console.log("Rendering admin interface"); // Debugging
+            const adminGroupsContainer = document.getElementById("admin-groups");
+            const adminFixturesContainer = document.getElementById("admin-fixtures");
+            adminGroupsContainer.innerHTML = "";
+            adminFixturesContainer.innerHTML = "<h2>Fixtures</h2>";
 
             // Render groups
             groups.forEach((group, index) => {
                 let groupDiv = document.createElement("div");
                 groupDiv.className = "group";
                 groupDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + index)}</h3><p>${group.join("<br>")}</p>`;
-                userGroupsContainer.appendChild(groupDiv);
+                adminGroupsContainer.appendChild(groupDiv);
             });
 
             // Render fixtures
@@ -153,16 +153,24 @@
                 fixtureDiv.className = "fixture-group";
                 fixtureDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + groupIndex)} Fixtures</h3>`;
                 groupFixtures.forEach((fixture, fixtureIndex) => {
-                    fixtureDiv.innerHTML += `<p>${fixture.match} - ${fixture.score1} : ${fixture.score2}</p>`;
+                    fixtureDiv.innerHTML += `<p>${fixture.match}</p>
+                                             <div class="admin-input">
+                                                 <input type="number" id="score1-${groupIndex}-${fixtureIndex}" placeholder="Score 1">
+                                                 <input type="number" id="score2-${groupIndex}-${fixtureIndex}" placeholder="Score 2">
+                                                 <button onclick="updateScore(${groupIndex}, ${fixtureIndex})">Update Score</button>
+                                             </div>`;
                 });
-                userFixturesContainer.appendChild(fixtureDiv);
+                adminFixturesContainer.appendChild(fixtureDiv);
             });
 
             // Render points table
-            renderPointsTable("user-points");
+            renderPointsTable("admin-points");
 
             // Render top scorers
-            renderTopScorers("user-top-scorers");
+            renderTopScorers("admin-top-scorers");
+
+            // Render player goals input
+            renderPlayerGoalsInput();
         }
 
         // Login function
