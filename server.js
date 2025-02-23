@@ -9,8 +9,8 @@ app.use(express.json());
 // Initial data
 let data = {
     groups: [
-        ["Rades Highrollers", "Fc Blaugrana", "Bafana Bafana", "Nova"], // Group 1
-        ["Belkaf sport", "Kawefel Getti", "Fackroun fc", "Dridi fc"]    // Group 2
+        ["Rades Highrollers", "Fc Blaugrana", "Belkaf sport", "Warriors fc"], // Group 1
+        ["Belkaf sport", "Kawefel Getti","Bafana Bafana ", "Nova fc"]    // Group 2
     ],
     fixtures: [],
     pointsTable: {},
@@ -125,6 +125,16 @@ function updatePointsTable(team1, team2, score1, score2) {
         data.pointsTable[team2].draws += 1;
     }
 }
+
+// Get player standings (sorted by goals scored)
+app.get("/player-standings", (req, res) => {
+    // Sort players by goals in descending order
+    const sortedPlayers = Object.keys(data.playerGoals)
+        .map(player => ({ player, goals: data.playerGoals[player] }))
+        .sort((a, b) => b.goals - a.goals);
+
+    res.json(sortedPlayers);
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
