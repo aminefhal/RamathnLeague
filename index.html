@@ -152,16 +152,16 @@
                 let fixtureDiv = document.createElement("div");
                 fixtureDiv.className = "fixture-group";
                 fixtureDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + groupIndex)} Fixtures</h3>`;
-                groupFixtures.matches.forEach((fixture) => {
-                    fixtureDiv.innerHTML += `<p>${fixture.team1} vs ${fixture.team2}</p>`;
+                groupFixtures.forEach((fixture, fixtureIndex) => {
+                    fixtureDiv.innerHTML += `<p>${fixture.match} - ${fixture.score1} : ${fixture.score2}</p>`;
                 });
                 userFixturesContainer.appendChild(fixtureDiv);
             });
 
-            // Render points table for user (can be simplified if necessary)
+            // Render points table
             renderPointsTable("user-points");
 
-            // Render top scorers for user (can be simplified if necessary)
+            // Render top scorers
             renderTopScorers("user-top-scorers");
         }
 
@@ -186,8 +186,8 @@
                 let fixtureDiv = document.createElement("div");
                 fixtureDiv.className = "fixture-group";
                 fixtureDiv.innerHTML = `<h3>Group ${String.fromCharCode(65 + groupIndex)} Fixtures</h3>`;
-                groupFixtures.matches.forEach((fixture, fixtureIndex) => {
-                    fixtureDiv.innerHTML += `<p>${fixture.team1} vs ${fixture.team2}</p>
+                groupFixtures.forEach((fixture, fixtureIndex) => {
+                    fixtureDiv.innerHTML += `<p>${fixture.match}</p>
                                              <div class="admin-input">
                                                  <input type="number" id="score1-${groupIndex}-${fixtureIndex}" placeholder="Score 1">
                                                  <input type="number" id="score2-${groupIndex}-${fixtureIndex}" placeholder="Score 2">
@@ -226,17 +226,6 @@
                 console.log("Invalid credentials");
                 alert("Invalid username or password.");
             }
-        }
-
-        // Placeholder functions for rendering points table and top scorers
-        function renderPointsTable(containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "<h3>Points Table</h3><p>Points data will go here.</p>";
-        }
-
-        function renderTopScorers(containerId) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = "<h3>Top Scorers</h3><p>Top scorers data will go here.</p>";
         }
 
         // Call fetchData() when the page loads (for testing)
