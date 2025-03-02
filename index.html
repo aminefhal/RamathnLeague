@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-    <style>
+   
+   <style>
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
@@ -435,6 +436,117 @@
             return rounds;
         }
 
+        // Render points table
+        function renderPointsTable(containerId) {
+            const pointsContainer = document.getElementById(containerId);
+            pointsContainer.innerHTML = "<h2>Points Table</h2>";
+
+            // Render Group A Table
+            let groupA = Object.keys(pointsTable).filter(team => pointsTable[team].group === "A");
+            let groupB = Object.keys(pointsTable).filter(team => pointsTable[team].group === "B");
+
+            renderGroupTable("Group A", groupA, pointsContainer);
+            renderGroupTable("Group B", groupB, pointsContainer);
+        }
+
+        // Render group table
+        function renderGroupTable(groupName, teams, container) {
+            let tableHtml = `<h3>${groupName}</h3>
+                             <table>
+                                 <tr>
+                                     <th>Team</th>
+                                     <th>Played</th>
+                                     <th>Wins</th>
+                                     <th>Draws</th>
+                                     <th>Losses</th>
+                                     <th>GF</th>
+                                     <th>GA</th>
+                                     <th>Points</th>
+                                 </tr>`;
+
+            teams.forEach(team => {
+                const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
+                tableHtml += `<tr>
+                                  <td>${team}</td>
+                                  <td>${played}</td>
+                                  <td>${wins}</td>
+                                  <td>${draws}</td>
+                                  <td>${losses}</td>
+                                  <td>${goalsFor}</td>
+                                  <td>${goalsAgainst}</td>
+                                  <td>${points}</td>
+                               </tr>`;
+            });
+
+            tableHtml += `</table>`;
+            container.innerHTML += tableHtml;
+        }
+
+        // Render top scorers
+        function renderTopScorers(containerId) {
+            const topScorersContainer = document.getElementById(containerId);
+            topScorersContainer.innerHTML = "<h2>Top Scorers</h2>";
+
+            // Sort players by goals (descending order)
+            const sortedPlayers = Object.keys(playerGoals).sort((a, b) => playerGoals[b] - playerGoals[a]);
+
+            let tableHtml = `<table>
+                                 <tr>
+                                     <th>Player</th>
+                                     <th>Goals</th>
+                                 </tr>`;
+
+            sortedPlayers.forEach(player => {
+                tableHtml += `<tr>
+                                  <td>${player}</td>
+                                  <td>${playerGoals[player]}</td>
+                               </tr>`;
+            });
+
+            tableHtml += `</table>`;
+            topScorersContainer.innerHTML += tableHtml;
+        }
+
+        // Render player goals input
+        function renderPlayerGoalsInput() {
+            const playerGoalsContainer = document.getElementById("admin-player-goals");
+            playerGoalsContainer.innerHTML = "<h2>Player Goals</h2>";
+
+            let inputHtml = `<table>
+                                 <tr>
+                                     <th>Player</th>
+                                     <th>Goals</th>
+                                 </tr>`;
+
+            players.forEach(player => {
+                inputHtml += `<tr>
+                                  <td>${player}</td>
+                                  <td>
+                                      <input type="number" id="goals-${player}" value="${playerGoals[player]}" min="0">
+                                      <button onclick="updatePlayerGoals('${player}')">Update</button>
+                                  </td>
+                               </tr>`;
+            });
+
+            inputHtml += `</table>`;
+            playerGoalsContainer.innerHTML += inputHtml;
+        }
+
+        // Update player goals
+        function updatePlayerGoals(player) {
+            const goals = parseInt(document.getElementById(`goals-${player}`).value);
+
+            if (isNaN(goals)) {
+                alert("Please enter a valid number of goals.");
+                return;
+            }
+
+            playerGoals[player] = goals;
+            saveData(); // Save updated data
+            renderTopScorers("admin-top-scorers"); // Update top scorers table
+            renderUserInterface(); // Update user view
+        }
+
         // Fetch data from the server
         async function fetchData() {
             try {
@@ -572,7 +684,6 @@
                 alert("Failed to save data. Please try again.");
             }
         }
-
         // Share the draw via URL
         function shareDraw() {
             const url = `${backendUrl}`;
