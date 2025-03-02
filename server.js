@@ -1,15 +1,19 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Allow requests from your frontend origin
-app.use(cors({
-    origin: 'https://aminefhal.github.io' // Replace with your frontend URL
-}));
-
+// Middleware
+app.use(cors({ origin: process.env.FRONTEND_URL || 'https://aminefhal.github.io' }));
+app.use(helmet());
+app.use(morgan('combined'));
 app.use(express.json());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 })); // Rate limiting
 
+// Data Store
 let data = {
     groups: [
         ["Blaugrana FC", "Rades Highrollers", "Bel Kaff FC", "Warriors FC"], // Group 1
@@ -20,7 +24,7 @@ let data = {
     playerGoals: {}
 };
 
-// Initialize data
+// Initialize Data
 function initializeData() {
     data.fixtures = [];
     data.groups.forEach((group, index) => {
@@ -30,7 +34,7 @@ function initializeData() {
     initializePlayerGoals();
 }
 
-// Generate fixtures
+// Generate Fixtures
 function generateFixtures(group, groupName) {
     let groupFixtures = [];
 
@@ -167,7 +171,7 @@ function generateFixtures(group, groupName) {
     return groupFixtures;
 }
 
-// Initialize points table
+// Initialize Points Table
 function initializePointsTable() {
     data.pointsTable = {};
     data.groups.forEach((group, groupIndex) => {
@@ -186,7 +190,7 @@ function initializePointsTable() {
     });
 }
 
-// Initialize player goals
+// Initialize Player Goals
 function initializePlayerGoals() {
     const players = [
         "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
@@ -209,28 +213,43 @@ function initializePlayerGoals() {
     });
 }
 
-// Initialize data on server start
-initializeData();
+// Routes
 
-// Root route
+// Root Route
 app.get('/', (req, res) => {
     res.send('Welcome to the Ramathan League Draw API!');
 });
 
-// API to get data
+// Get Data
 app.get('/api/data', (req, res) => {
     res.json(data);
 });
 
-// API to save data
+// Save Data
 app.post('/api/save', (req, res) => {
+    const { groups, fixtures, pointsTable, playerGoals } = req.body;
+    if (!groups || !fixtures || !pointsTable || !playerGoals) {
+        return res.status(400).json({ error: 'Invalid data structure' });
+    }
     data = req.body;
     res.json({ message: 'Data saved successfully!' });
 });
 
-// Serve static files
-app.use(express.static('public'));
+// Backup Data
+app.get('/api/backup', (req, res) => {
+    res.setHeader('Content-Disposition', 'attachment; filename="backup.json"');
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(data, null, 2));
+});
 
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Start Server
 app.listen(port, () => {
+    initializeData();
     console.log(`Server running at http://localhost:${port}`);
 });
