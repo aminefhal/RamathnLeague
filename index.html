@@ -356,51 +356,54 @@ function generateFixtures() {
         }
 
         // Render points table
-        function renderPointsTable(containerId) {
-            const pointsContainer = document.getElementById(containerId);
-            pointsContainer.innerHTML = "<h2>Points Table</h2>";
+      // Render Points Table (with sorting)
+function renderPointsTable(containerId) {
+    const pointsContainer = document.getElementById(containerId);
+    pointsContainer.innerHTML = "<h2>Points Table</h2>";
 
-            // Render Group A Table
-            let groupA = Object.keys(pointsTable).filter(team => pointsTable[team].group === "A");
-            let groupB = Object.keys(pointsTable).filter(team => pointsTable[team].group === "B");
+    // Sort teams by points (descending order)
+    const sortedTeams = Object.keys(pointsTable).sort((a, b) => pointsTable[b].points - pointsTable[a].points);
 
-            renderGroupTable("Group A", groupA, pointsContainer);
-            renderGroupTable("Group B", groupB, pointsContainer);
-        }
+    // Render Group A Table
+    let groupA = sortedTeams.filter(team => pointsTable[team].group === "A");
+    let groupB = sortedTeams.filter(team => pointsTable[team].group === "B");
 
-        // Render group table
-        function renderGroupTable(groupName, teams, container) {
-            let tableHtml = `<h3>${groupName}</h3>
-                             <table>
-                                 <tr>
-                                     <th>Team</th>
-                                     <th>Played</th>
-                                     <th>Wins</th>
-                                     <th>Draws</th>
-                                     <th>Losses</th>
-                                     <th>GF</th>
-                                     <th>GA</th>
-                                     <th>Points</th>
-                                 </tr>`;
+    renderGroupTable("Group A", groupA, pointsContainer);
+    renderGroupTable("Group B", groupB, pointsContainer);
+}
 
-            teams.forEach(team => {
-                const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
-                tableHtml += `<tr>
-                                  <td>${team}</td>
-                                  <td>${played}</td>
-                                  <td>${wins}</td>
-                                  <td>${draws}</td>
-                                  <td>${losses}</td>
-                                  <td>${goalsFor}</td>
-                                  <td>${goalsAgainst}</td>
-                                  <td>${points}</td>
-                               </tr>`;
-            });
+// Render Group Table
+function renderGroupTable(groupName, teams, container) {
+    let tableHtml = `<h3>${groupName}</h3>
+                     <table>
+                         <tr>
+                             <th>Team</th>
+                             <th>Played</th>
+                             <th>Wins</th>
+                             <th>Draws</th>
+                             <th>Losses</th>
+                             <th>GF</th>
+                             <th>GA</th>
+                             <th>Points</th>
+                         </tr>`;
 
-            tableHtml += `</table>`;
-            container.innerHTML += tableHtml;
-        }
+    teams.forEach(team => {
+        const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
+        tableHtml += `<tr>
+                          <td>${team}</td>
+                          <td>${played}</td>
+                          <td>${wins}</td>
+                          <td>${draws}</td>
+                          <td>${losses}</td>
+                          <td>${goalsFor}</td>
+                          <td>${goalsAgainst}</td>
+                          <td>${points}</td>
+                       </tr>`;
+    });
 
+    tableHtml += `</table>`;
+    container.innerHTML += tableHtml;
+}
         // Render top scorers
         function renderTopScorers(containerId) {
             const topScorersContainer = document.getElementById(containerId);
