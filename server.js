@@ -220,11 +220,21 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Ramathan League Draw API!');
 });
 
-// Get Data
+// Get Data (with sorted points table)
 app.get('/api/data', (req, res) => {
-    res.json(data);
-});
+    // Sort the points table by points (descending order)
+    const sortedPointsTable = Object.entries(data.pointsTable)
+        .sort(([, a], [, b]) => b.points - a.points)
+        .reduce((acc, [team, stats]) => {
+            acc[team] = stats;
+            return acc;
+        }, {});
 
+    res.json({
+        ...data,
+        pointsTable: sortedPointsTable // Send sorted points table
+    });
+});
 // Save Data
 app.post('/api/save', (req, res) => {
     const { groups, fixtures, pointsTable, playerGoals } = req.body;
