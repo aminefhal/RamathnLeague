@@ -12,8 +12,8 @@ app.use(express.json());
 
 let data = {
     groups: [
-        ["Rades Highrollers", "Fc Blaugrana", "Belkaf sport", "Warriors Fc "], // Group 1
-        ["Bafana Bafana", "Nova", "Kawefel Getti", "Fakroun fc"] // Group 2
+        ["Blaugrana FC", "Rades Highrollers", "Bel Kaff FC", "Warriors FC"], // Group 1
+        ["Nova FC", "Bafana Bafana", "Fakroun FC", "9awefl Getti"] // Group 2
     ],
     fixtures: [],
     pointsTable: {},
@@ -33,19 +33,137 @@ function initializeData() {
 // Generate fixtures
 function generateFixtures(group, groupName) {
     let groupFixtures = [];
-    for (let i = 0; i < group.length; i++) {
-        for (let j = i + 1; j < group.length; j++) {
-            groupFixtures.push({
-                match: `${group[i]} vs ${group[j]}`,
-                team1: group[i],
-                team2: group[j],
-                score1: 0,
-                score2: 0,
-                played: false,
-                group: groupName
-            });
-        }
+
+    if (groupName === "A") {
+        // Group 1 Fixtures
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[1]}`,
+            team1: group[0],
+            team2: group[1],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW1"
+        });
+        groupFixtures.push({
+            match: `${group[2]} vs ${group[3]}`,
+            team1: group[2],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW1"
+        });
+
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[3]}`,
+            team1: group[0],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW2"
+        });
+        groupFixtures.push({
+            match: `${group[2]} vs ${group[1]}`,
+            team1: group[2],
+            team2: group[1],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW2"
+        });
+
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[2]}`,
+            team1: group[0],
+            team2: group[2],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW3"
+        });
+        groupFixtures.push({
+            match: `${group[1]} vs ${group[3]}`,
+            team1: group[1],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW3"
+        });
+    } else if (groupName === "B") {
+        // Group 2 Fixtures
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[1]}`,
+            team1: group[0],
+            team2: group[1],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW1"
+        });
+        groupFixtures.push({
+            match: `${group[2]} vs ${group[3]}`,
+            team1: group[2],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW1"
+        });
+
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[3]}`,
+            team1: group[0],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW2"
+        });
+        groupFixtures.push({
+            match: `${group[2]} vs ${group[1]}`,
+            team1: group[2],
+            team2: group[1],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW2"
+        });
+
+        groupFixtures.push({
+            match: `${group[0]} vs ${group[2]}`,
+            team1: group[0],
+            team2: group[2],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW3"
+        });
+        groupFixtures.push({
+            match: `${group[1]} vs ${group[3]}`,
+            team1: group[1],
+            team2: group[3],
+            score1: 0,
+            score2: 0,
+            played: false,
+            group: groupName,
+            gameWeek: "GW3"
+        });
     }
+
     return groupFixtures;
 }
 
@@ -71,20 +189,19 @@ function initializePointsTable() {
 // Initialize player goals
 function initializePlayerGoals() {
     const players = [
-            "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
-            "Bahar", "Ali", "Anas", "Louati", "Malek",
-            "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
-            "Brahim", "Jasser", "Thabet", "Bahreya",
-            "Noury", "Abdou", "Mehdi", "Derouiche",
-            "Dali", "Souhaib", "Farhat", "Mrabet",
-            "Besrour", "Yemen", "Jesser", "Hamed",
-            "Ahmed", "Aziz", "Avila", "Chmich",
-            "Llaykaa","Dhia", "Youssef", "Derouiche",
-            "Adam", "Mazgou","Essghaier", "Haj Said",
-            "Dridi","Dridi","Moemen","Debchi",
-            "Charfa","Cherif","Brahim Yz","Islem",
-            "Atef","Midou","Chicharito",
-       
+        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
+        "Bahar", "Ali", "Anas", "Louati", "Malek",
+        "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
+        "Brahim", "Jasser", "Thabet", "Bahreya",
+        "Noury", "Abdou", "Mehdi", "Derouiche",
+        "Dali", "Souhaib", "Farhat", "Mrabet",
+        "Besrour", "Yemen", "Jesser", "Hamed",
+        "Ahmed", "Aziz", "Avila", "Chmich",
+        "Llaykaa","Dhia", "Youssef", "Derouiche",
+        "Adam", "Mazgou","Essghaier", "Haj Said",
+        "Dridi","Dridi","Moemen","Debchi",
+        "Charfa","Cherif","Brahim Yz","Islem",
+        "Atef","Midou","Chicharito",
     ];
     data.playerGoals = {};
     players.forEach(player => {
