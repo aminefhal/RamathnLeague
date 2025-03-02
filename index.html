@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-     <style>
+    <style>
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
@@ -423,6 +423,16 @@
             }
 
             return groupFixtures;
+        }
+
+        // Organize fixtures into rounds
+        function organizeFixturesIntoRounds(fixtures) {
+            let rounds = [];
+            let numRounds = fixtures.length / 2; // Assuming 2 matches per round
+            for (let i = 0; i < numRounds; i++) {
+                rounds.push(fixtures.slice(i * 2, (i + 1) * 2));
+            }
+            return rounds;
         }
 
         // Fetch data from the server
