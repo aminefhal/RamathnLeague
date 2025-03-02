@@ -290,23 +290,33 @@
         }
 
         // Generate fixtures
-        function generateFixtures(group, groupName) {
-            let groupFixtures = [];
-            for (let i = 0; i < group.length; i++) {
-                for (let j = i + 1; j < group.length; j++) {
-                    groupFixtures.push({
-                        match: `${group[i]} vs ${group[j]}`,
-                        team1: group[i],
-                        team2: group[j],
-                        score1: 0,
-                        score2: 0,
-                        played: false,
-                        group: groupName
-                    });
-                }
-            }
-            return groupFixtures;
-        }
+function generateFixtures() {
+    fixtures = [
+        // Game Week 1 - Group 1
+        { group: "A", match: "Blaugrana FC vs Rades Highrollers", score1: null, score2: null, played: false },
+        { group: "A", match: "Bel Kaff FC vs Warriors FC", score1: null, score2: null, played: false },
+        
+        // Game Week 1 - Group 2
+        { group: "B", match: "Nova FC vs Bafana Bafana", score1: null, score2: null, played: false },
+        { group: "B", match: "Fakroun FC vs 9awefl Getti", score1: null, score2: null, played: false },
+        
+        // Game Week 2 - Group 1
+        { group: "A", match: "Blaugrana FC vs Warriors FC", score1: null, score2: null, played: false },
+        { group: "A", match: "Bel Kaff FC vs Rades Highrollers", score1: null, score2: null, played: false },
+        
+        // Game Week 2 - Group 2
+        { group: "B", match: "Nova FC vs 9awefl Getti", score1: null, score2: null, played: false },
+        { group: "B", match: "Fakroun FC vs Bafana Bafana", score1: null, score2: null, played: false },
+        
+        // Game Week 3 - Group 1
+        { group: "A", match: "Blaugrana FC vs Bel Kaff Sport", score1: null, score2: null, played: false },
+        { group: "A", match: "Rades Highrollers vs Warriors FC", score1: null, score2: null, played: false },
+        
+        // Game Week 3 - Group 2
+        { group: "B", match: "Nova FC vs Fakroun FC", score1: null, score2: null, played: false },
+        { group: "B", match: "Bafana Bafana vs 9awefl Getti", score1: null, score2: null, played: false }
+    ];
+}
 
         // Organize fixtures into rounds
         function organizeFixturesIntoRounds(fixtures) {
