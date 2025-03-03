@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramathan League Draw</title>
-   <style>
+    <style>
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
@@ -158,29 +158,8 @@
             margin-bottom: 15px;
         }
 
-        .login-form {
-            margin-top: 20px;
-        }
-
-        .login-form input {
-            padding: 8px;
-            font-size: 1rem;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
         .hidden {
             display: none;
-        }
-
-        /* Enhanced Button Styles */
-        .reset-button {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-
-        .reset-button:hover {
-            background: linear-gradient(135deg, #c0392b, #e74c3c);
         }
 
         /* Responsive Design */
@@ -206,33 +185,32 @@
     </style>
 </head>
 <body>
-    <div id="login" class="container">
-        <h1>Login</h1>
-        <div class="login-form">
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-        </div>
-    </div>
-
-    <div id="user-interface" class="container hidden">
+    <!-- User Interface (visible by default) -->
+    <div id="user-interface" class="container">
         <h1>Ramathan League Draw</h1>
+        <button onclick="showAdminInterface()">Switch to Admin Interface</button>
         <div id="user-groups"></div>
         <div id="user-fixtures"></div>
         <div id="user-points" class="points-table"></div>
         <div id="user-top-scorers" class="points-table"></div>
     </div>
 
+    <!-- Admin Interface (hidden by default) -->
     <div id="admin-interface" class="container hidden">
-        <h1>Ramathan League Draw</h1>
-        <button onclick="saveData()">Save Draw</button>
-        <button onclick="shareDraw()">Share Draw</button>
-        <button onclick="resetResults()">Reset Results</button> <!-- Add this button -->
-        <div id="admin-groups"></div>
-        <div id="admin-fixtures"></div>
-        <div id="admin-points" class="points-table"></div>
-        <div id="admin-top-scorers" class="points-table"></div>
-        <div id="admin-player-goals" class="points-table"></div>
+        <h1>Ramathan League Draw - Admin</h1>
+        <input type="password" id="admin-password" placeholder="Enter Admin Password">
+        <button onclick="checkAdminPassword()">Access Admin</button>
+        <div id="admin-content" class="hidden">
+            <button onclick="showUserInterface()">Switch to User Interface</button>
+            <button onclick="saveData()">Save Draw</button>
+            <button onclick="shareDraw()">Share Draw</button>
+            <button onclick="resetResults()">Reset Results</button>
+            <div id="admin-groups"></div>
+            <div id="admin-fixtures"></div>
+            <div id="admin-points" class="points-table"></div>
+            <div id="admin-top-scorers" class="points-table"></div>
+            <div id="admin-player-goals" class="points-table"></div>
+        </div>
     </div>
 
     <script>
@@ -245,7 +223,7 @@
 
         const players = [
             "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
-            "Bahar", "Ali", "Anas", "Louati", "Malek",
+            "Bahar", "Ali", "Anas", "Louati", "Malik",
             "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
             "Brahim", "Jasser", "Thabet", "Bahreya",
             "Noury", "Abdou", "Mehdi", "Derouiche",
@@ -253,10 +231,10 @@
             "Besrour", "Yemen", "Jesser", "Hamed",
             "Ahmed", "Aziz", "Avila", "Chmich",
             "Llaykaa","Dhia", "Youssef", "Derouiche",
-            "Adam", "Mazgou","Essghaier", "Haj Said",
+            "D.Adam", "Mazgou","Essghaier", "Haj Said",
             "Dridi","Dridi","Moemen","Debchi",
             "Charfa","Cherif","Brahim Yz","Islem",
-            "Atef","Midou","Chicharito",
+            "Atef","Midou","Azer Chicharito","Bachar","Saif Salah","Khazri","Ala"
         ];
 
         let fixtures = [];
@@ -290,42 +268,32 @@
         }
 
         // Generate fixtures
-function generateFixtures() {
-    fixtures = [
-        // Game Week 1 - Group 1
-        { group: "A", match: "Blaugrana FC vs Rades Highrollers", score1: null, score2: null, played: false },
-        { group: "A", match: "Bel Kaff FC vs Warriors FC", score1: null, score2: null, played: false },
-        
-        // Game Week 1 - Group 2
-        { group: "B", match: "Nova FC vs Bafana Bafana", score1: null, score2: null, played: false },
-        { group: "B", match: "Fakroun FC vs 9awefl Getti", score1: null, score2: null, played: false },
-        
-        // Game Week 2 - Group 1
-        { group: "A", match: "Blaugrana FC vs Warriors FC", score1: null, score2: null, played: false },
-        { group: "A", match: "Bel Kaff FC vs Rades Highrollers", score1: null, score2: null, played: false },
-        
-        // Game Week 2 - Group 2
-        { group: "B", match: "Nova FC vs 9awefl Getti", score1: null, score2: null, played: false },
-        { group: "B", match: "Fakroun FC vs Bafana Bafana", score1: null, score2: null, played: false },
-        
-        // Game Week 3 - Group 1
-        { group: "A", match: "Blaugrana FC vs Bel Kaff Sport", score1: null, score2: null, played: false },
-        { group: "A", match: "Rades Highrollers vs Warriors FC", score1: null, score2: null, played: false },
-        
-        // Game Week 3 - Group 2
-        { group: "B", match: "Nova FC vs Fakroun FC", score1: null, score2: null, played: false },
-        { group: "B", match: "Bafana Bafana vs 9awefl Getti", score1: null, score2: null, played: false }
-    ];
-}
-
-        // Organize fixtures into rounds
-        function organizeFixturesIntoRounds(fixtures) {
-            let rounds = [];
-            let numRounds = fixtures.length / 2; // Assuming 2 matches per round
-            for (let i = 0; i < numRounds; i++) {
-                rounds.push(fixtures.slice(i * 2, (i + 1) * 2));
-            }
-            return rounds;
+        function generateFixtures() {
+            fixtures = [
+                // Game Week 1 - Group 1
+                { group: "A", match: "Blaugrana FC vs Rades Highrollers", score1: null, score2: null, played: false },
+                { group: "A", match: "Bel Kaff FC vs Warriors FC", score1: null, score2: null, played: false },
+                
+                // Game Week 1 - Group 2
+                { group: "B", match: "Nova FC vs Bafana Bafana", score1: null, score2: null, played: false },
+                { group: "B", match: "Fakroun FC vs 9awefl Getti", score1: null, score2: null, played: false },
+                
+                // Game Week 2 - Group 1
+                { group: "A", match: "Blaugrana FC vs Warriors FC", score1: null, score2: null, played: false },
+                { group: "A", match: "Bel Kaff FC vs Rades Highrollers", score1: null, score2: null, played: false },
+                
+                // Game Week 2 - Group 2
+                { group: "B", match: "Nova FC vs 9awefl Getti", score1: null, score2: null, played: false },
+                { group: "B", match: "Fakroun FC vs Bafana Bafana", score1: null, score2: null, played: false },
+                
+                // Game Week 3 - Group 1
+                { group: "A", match: "Blaugrana FC vs Bel Kaff Sport", score1: null, score2: null, played: false },
+                { group: "A", match: "Rades Highrollers vs Warriors FC", score1: null, score2: null, played: false },
+                
+                // Game Week 3 - Group 2
+                { group: "B", match: "Nova FC vs Fakroun FC", score1: null, score2: null, played: false },
+                { group: "B", match: "Bafana Bafana vs 9awefl Getti", score1: null, score2: null, played: false }
+            ];
         }
 
         // Update points table
@@ -356,54 +324,54 @@ function generateFixtures() {
         }
 
         // Render points table
-      // Render Points Table (with sorting)
-function renderPointsTable(containerId) {
-    const pointsContainer = document.getElementById(containerId);
-    pointsContainer.innerHTML = "<h2>Points Table</h2>";
+        function renderPointsTable(containerId) {
+            const pointsContainer = document.getElementById(containerId);
+            pointsContainer.innerHTML = "<h2>Points Table</h2>";
 
-    // Sort teams by points (descending order)
-    const sortedTeams = Object.keys(pointsTable).sort((a, b) => pointsTable[b].points - pointsTable[a].points);
+            // Sort teams by points (descending order)
+            const sortedTeams = Object.keys(pointsTable).sort((a, b) => pointsTable[b].points - pointsTable[a].points);
 
-    // Render Group A Table
-    let groupA = sortedTeams.filter(team => pointsTable[team].group === "A");
-    let groupB = sortedTeams.filter(team => pointsTable[team].group === "B");
+            // Render Group A Table
+            let groupA = sortedTeams.filter(team => pointsTable[team].group === "A");
+            let groupB = sortedTeams.filter(team => pointsTable[team].group === "B");
 
-    renderGroupTable("Group A", groupA, pointsContainer);
-    renderGroupTable("Group B", groupB, pointsContainer);
-}
+            renderGroupTable("Group A", groupA, pointsContainer);
+            renderGroupTable("Group B", groupB, pointsContainer);
+        }
 
-// Render Group Table
-function renderGroupTable(groupName, teams, container) {
-    let tableHtml = `<h3>${groupName}</h3>
-                     <table>
-                         <tr>
-                             <th>Team</th>
-                             <th>Played</th>
-                             <th>Wins</th>
-                             <th>Draws</th>
-                             <th>Losses</th>
-                             <th>GF</th>
-                             <th>GA</th>
-                             <th>Points</th>
-                         </tr>`;
+        // Render Group Table
+        function renderGroupTable(groupName, teams, container) {
+            let tableHtml = `<h3>${groupName}</h3>
+                             <table>
+                                 <tr>
+                                     <th>Team</th>
+                                     <th>Played</th>
+                                     <th>Wins</th>
+                                     <th>Draws</th>
+                                     <th>Losses</th>
+                                     <th>GF</th>
+                                     <th>GA</th>
+                                     <th>Points</th>
+                                 </tr>`;
 
-    teams.forEach(team => {
-        const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
-        tableHtml += `<tr>
-                          <td>${team}</td>
-                          <td>${played}</td>
-                          <td>${wins}</td>
-                          <td>${draws}</td>
-                          <td>${losses}</td>
-                          <td>${goalsFor}</td>
-                          <td>${goalsAgainst}</td>
-                          <td>${points}</td>
-                       </tr>`;
-    });
+            teams.forEach(team => {
+                const { played, wins, draws, losses, goalsFor, goalsAgainst, points } = pointsTable[team];
+                tableHtml += `<tr>
+                                  <td>${team}</td>
+                                  <td>${played}</td>
+                                  <td>${wins}</td>
+                                  <td>${draws}</td>
+                                  <td>${losses}</td>
+                                  <td>${goalsFor}</td>
+                                  <td>${goalsAgainst}</td>
+                                  <td>${points}</td>
+                               </tr>`;
+            });
 
-    tableHtml += `</table>`;
-    container.innerHTML += tableHtml;
-}
+            tableHtml += `</table>`;
+            container.innerHTML += tableHtml;
+        }
+
         // Render top scorers
         function renderTopScorers(containerId) {
             const topScorersContainer = document.getElementById(containerId);
@@ -641,21 +609,25 @@ function renderGroupTable(groupName, teams, container) {
             }
         }
 
-        // Login function
-        async function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+        // Function to show the admin interface
+        function showAdminInterface() {
+            document.getElementById("user-interface").classList.add("hidden");
+            document.getElementById("admin-interface").classList.remove("hidden");
+        }
 
-            if (username === "admin" && password === "admin123") {
-                document.getElementById("login").classList.add("hidden");
-                document.getElementById("admin-interface").classList.remove("hidden");
-                await fetchData();
-            } else if (username === "user" && password === "user123") {
-                document.getElementById("login").classList.add("hidden");
-                document.getElementById("user-interface").classList.remove("hidden");
-                await fetchData();
+        // Function to show the user interface
+        function showUserInterface() {
+            document.getElementById("admin-interface").classList.add("hidden");
+            document.getElementById("user-interface").classList.remove("hidden");
+        }
+
+        // Check admin password
+        function checkAdminPassword() {
+            const password = document.getElementById("admin-password").value;
+            if (password === "admin123") { // Replace with your desired password
+                document.getElementById("admin-content").classList.remove("hidden");
             } else {
-                alert("Invalid username or password.");
+                alert("Incorrect password. Please try again.");
             }
         }
 
@@ -693,6 +665,7 @@ function renderGroupTable(groupName, teams, container) {
         window.onload = async () => {
             initializeData();
             await fetchData();
+            renderUserInterface(); // Show the user interface by default
         };
     </script>
 </body>
