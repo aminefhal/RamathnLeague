@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'https://aminefhal.github.io' }));
+app.use(cors({ origin: process.env.FRONTEND_URL || '*' })); // Allow all origins
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(express.json());
@@ -193,7 +193,20 @@ function initializePointsTable() {
 // Initialize Player Goals
 function initializePlayerGoals() {
     const players = [
-        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", "Bahar", "Ali", "Anas", "Louati", "Malik","Hwita", "Aymen", "Dahleb", "Rayen", "Hama","Brahim", "Jasser", "Thabet", "Bahreya","Noury", "Abdou", "Mehdi", "Derouiche","Dali", "Souhaib", "Farhat", "Mrabet","Besrour", "Yemen", "Jesser", "Hamed","Ahmed", "Aziz", "Avila", "Chmich","Llaykaa","Dhia", "Youssef", "Derouiche","D.Adam", "Mazgou","Essghaier", "Haj Said","Dridi","Dridi","Moemen","Debchi","Charfa","Cherif","Brahim Yz","Islem","Atef","Midou","Azer Chicharito","Bachar","Saif Salah","Khazri","Ala" // Added new players
+        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
+        "Bahar", "Ali", "Anas", "Louati", "Malek",
+        "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
+        "Brahim", "Jasser", "Thabet", "Bahreya",
+        "Noury", "Abdou", "Mehdi", "Derouiche",
+        "Dali", "Souhaib", "Farhat", "Mrabet",
+        "Besrour", "Yemen", "Jesser", "Hamed",
+        "Ahmed", "Aziz", "Avila", "Chmich",
+        "Llaykaa","Dhia", "Youssef", "Derouiche",
+        "Adam", "Mazgou","Essghaier", "Haj Said",
+        "Dridi","Dridi","Moemen","Debchi",
+        "Charfa","Cherif","Brahim Yz","Islem",
+        "Atef","Midou","Chicharito",
+        "Seif Salah", "Bachar", "Khazri", "Mohamed" // Added new players
     ];
     data.playerGoals = {};
     players.forEach(player => {
