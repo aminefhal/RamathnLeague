@@ -193,19 +193,7 @@ function initializePointsTable() {
 // Initialize Player Goals
 function initializePlayerGoals() {
     const players = [
-        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", 
-        "Bahar", "Ali", "Anas", "Louati", "Malek",
-        "Hwita", "Aymen", "Dahleb", "Rayen", "Hama",
-        "Brahim", "Jasser", "Thabet", "Bahreya",
-        "Noury", "Abdou", "Mehdi", "Derouiche",
-        "Dali", "Souhaib", "Farhat", "Mrabet",
-        "Besrour", "Yemen", "Jesser", "Hamed",
-        "Ahmed", "Aziz", "Avila", "Chmich",
-        "Llaykaa","Dhia", "Youssef", "Derouiche",
-        "Adam", "Mazgou","Essghaier", "Haj Said",
-        "Dridi","Dridi","Moemen","Debchi",
-        "Charfa","Cherif","Brahim Yz","Islem",
-        "Atef","Midou","Chicharito",
+        "Hamadi", "Le Fhal", "Dhahbi", "Seifeddine", "Bahar", "Ali", "Anas", "Louati", "Malik","Hwita", "Aymen", "Dahleb", "Rayen", "Hama","Brahim", "Jasser", "Thabet", "Bahreya","Noury", "Abdou", "Mehdi", "Derouiche","Dali", "Souhaib", "Farhat", "Mrabet","Besrour", "Yemen", "Jesser", "Hamed","Ahmed", "Aziz", "Avila", "Chmich","Llaykaa","Dhia", "Youssef", "Derouiche","D.Adam", "Mazgou","Essghaier", "Haj Said","Dridi","Dridi","Moemen","Debchi","Charfa","Cherif","Brahim Yz","Islem","Atef","Midou","Azer Chicharito","Bachar","Saif Salah","Khazri","Ala" // Added new players
     ];
     data.playerGoals = {};
     players.forEach(player => {
@@ -235,6 +223,7 @@ app.get('/api/data', (req, res) => {
         pointsTable: sortedPointsTable // Send sorted points table
     });
 });
+
 // Save Data
 app.post('/api/save', (req, res) => {
     const { groups, fixtures, pointsTable, playerGoals } = req.body;
