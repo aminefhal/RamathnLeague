@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        nav {
+            margin-top: 1rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #34495e;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            margin: 2.5rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: #34495e;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .experience {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #ecf0f1;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 1rem;
+        }
+
+        li {
+            margin: 0.8rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        li:before {
+            content: "▸";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+        }
+
+        p {
+            margin: 0.8rem 0;
+            line-height: 1.8;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+            
+            main {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+            
+            section {
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenue sur mon site</h1>
+        <nav>
+            <a href="#apropos">À propos</a>
+            <a href="#parcours">Parcours</a>
+            <a href="#interets">Centres d'intérêt</a>
+            <a href="#activites">Activités</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="apropos">
+            <h2>À propos de moi</h2>
+            <p>Je suis passionné(e) par le développement web et les nouvelles technologies. Curieux(se) et motivé(e), j'aime apprendre de nouvelles compétences et relever des défis.</p>
+        </section>
+
+        <section id="parcours">
+            <h2>Mon Parcours</h2>
+            <div class="experience">
+                <h3>Formation</h3>
+                <p>Diplôme en informatique - Université/École (Année)</p>
+                <p>Certifications en développement web</p>
+            </div>
+            <div class="experience">
+                <h3>Expérience professionnelle</h3>
+                <p>Stage en développement web - Entreprise (Année)</p>
+                <p>Projets personnels et collaboratifs</p>
+            </div>
+        </section>
+
+        <section id="interets">
+            <h2>Centres d'intérêt</h2>
+            <ul>
+                <li>Développement web et programmation</li>
+                <li>Nouvelles technologies et innovation</li>
+                <li>Design UI/UX</li>
+                <li>Photographie et création numérique</li>
+                <li>Voyages et découvertes culturelles</li>
+            </ul>
+        </section>
+
+        <section id="activites">
+            <h2>Activités</h2>
+            <div class="experience">
+                <h3>Activités extrascolaires</h3>
+                <p>Participation à des hackathons et événements tech</p>
+                <p>Bénévolat dans des associations</p>
+            </div>
+            <div class="experience">
+                <h3>Loisirs</h3>
+                <p>Sports : Football, Natation, Randonnée</p>
+                <p>Lecture et apprentissage continu</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Email : votre.email@example.com</p>
+            <p>GitHub : github.com/votre-compte</p>
+            <p>LinkedIn : linkedin.com/in/votre-profil</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Mon Portfolio - Tous droits réservés</p>
+    </footer>
+</body>
+</html>
